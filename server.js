@@ -1,10 +1,23 @@
 import express from 'express'
 import mongoose from 'mongoose'
+import unless from "express-unless"
 
 import { mongoConnect, PORT } from './config/config'
 import { userRouter } from './routes/userRoute'
+import { authenticateToken } from './middlewares/auth.js'
+import { errorHandler } from './middlewares/errors'
 
 const app = express()
+
+authenticateToken.unless = unless;
+app.use(
+  authenticateToken.unless({
+    path: [
+      { url: "/user/signUp", methods: ["POST"] },
+    ],
+  })
+);
+
 app.use(express.json())
 
 app.get('/', (req, res) => {
@@ -16,6 +29,10 @@ app.get('/', (req, res) => {
 // User Routes
 app.use('/user', userRouter)
 
+// middleware for error responses
+app.use(errorHandler);
+
+mongoose.Promise = global.Promise;
 const start = async () => {
   try {
     await mongoose.connect(mongoConnect)
