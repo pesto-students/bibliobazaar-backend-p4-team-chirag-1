@@ -9,11 +9,25 @@ import { errorHandler } from './middlewares/errors'
 
 const app = express()
 
+mongoose.Promise = global.Promise;
+const start = async () => {
+  try {
+    await mongoose.connect(mongoConnect)
+    app.listen(PORT, () => console.log(`Listening on port ${PORT}`))
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+start()
+
 authenticateToken.unless = unless;
 app.use(
   authenticateToken.unless({
     path: [
+      // { url: "/", methods: ["GET"] },
       { url: "/user/signUp", methods: ["POST"] },
+      { url: "/user/login", methods: ["POST"] },
     ],
   })
 );
@@ -32,14 +46,4 @@ app.use('/user', userRouter)
 // middleware for error responses
 app.use(errorHandler);
 
-mongoose.Promise = global.Promise;
-const start = async () => {
-  try {
-    await mongoose.connect(mongoConnect)
-    app.listen(PORT, () => console.log(`Listening on port ${PORT}`))
-  } catch (err) {
-    console.error(err)
-  }
-}
 
-start()
