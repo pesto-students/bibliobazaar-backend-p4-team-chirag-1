@@ -5,17 +5,15 @@ const authenticateToken = (req, res, next) => {
   const token = authHeader && authHeader.split(' ')[1] 
 
   if (token == null) return res.sendStatus(401);
-
   jwt.verify(token, "process.env.TOKEN_SECRET", (err, user) => {
-    console.log(err);
     if (err) return res.sendStatus(403);
     req.user = user;
     next();
   });
 }
 
-const generateAccessToken = (username) => {
-  return jwt.sign({ data: username }, "process.env.TOKEN_SECRET", {
+const generateAccessToken = (emailId) => {
+  return jwt.sign({ data: emailId }, "process.env.TOKEN_SECRET", {
     expiresIn: "24h",
   });
 }
