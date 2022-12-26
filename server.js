@@ -1,11 +1,13 @@
 import express from 'express'
 import mongoose from 'mongoose'
 import unless from "express-unless"
+import upload from 'express-fileupload'
 
 import { mongoConnect, PORT } from './config/config'
 import { userRouter } from './routes/userRoute'
 import { authenticateToken } from './middlewares/auth.js'
 import { errorHandler } from './middlewares/errors'
+import { uploadRouter } from './routes/uploadRoute'
 
 const app = express()
 
@@ -33,6 +35,7 @@ app.use(
 );
 
 app.use(express.json())
+app.use(upload())
 
 app.get('/', (req, res) => {
   res.status(200).json({
@@ -42,6 +45,7 @@ app.get('/', (req, res) => {
 
 // User Routes
 app.use('/user', userRouter)
+app.use('/',uploadRouter)
 
 // middleware for error responses
 app.use(errorHandler);

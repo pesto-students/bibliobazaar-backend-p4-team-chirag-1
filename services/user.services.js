@@ -52,26 +52,24 @@ const loginService = async ({ emailId, password }, callback) => {
 }
 
 const updateProfilePictureService = async ({ profilePicture, data }, callback) => {
-  console.log('uer', data)
   if (profilePicture === undefined) {
     return callback(
       {
-        message: "Profile Picture Required",
+        message: "Profile Picture url is required",
       },
       ""
     );
   }
   const user = await users.findOne({ emailId: data });
-  console.log('sdf', user)
-  return callback({}, "")
+  // return callback({}, "")
 
   if (user != null) {
-    // const updateUser = await users.findByIdAndUpdate(
-    //   ...user,
-    //   profilePicture,
-    //   { new: true }
-    // )
-    // return callback(null, updateUser);
+    const updateUser = await users.findByIdAndUpdate(
+      user._id,
+      { profilePicture },
+      { new: true }
+    )
+    return callback(null, updateUser);
   } else {
     return callback({
       message: "Invalid",
