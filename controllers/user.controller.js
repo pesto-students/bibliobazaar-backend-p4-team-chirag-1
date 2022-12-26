@@ -34,9 +34,10 @@ const login = (req, res, next) => {
   });
 }
 
-const updateProfilePicture = (req, res, next) => {
-  const { profilePicture, user } = req.body
+const updateProfilePicture = async (req, res, next) => {
+  const { profilePicture } = req.body
   const { data } = req.user
+
   updateProfilePictureService({ profilePicture, data }, (error, results) => {
     if (error) {
       return next(error);
