@@ -16,22 +16,24 @@ var imagekit = new ImageKit({
   urlEndpoint: "https://ik.imagekit.io/biblioBazaar"
 });
 
-const uploadService = ({ file, fileName }, callback) => {
+const uploadService = ({ file, fileName, url }, callback) => {
   if (file === undefined || fileName === undefined) {
-    return callback(
-      {
-        message: "File Required",
-      },
-      ""
-    );
+    if (url === undefined) {
+      return callback(
+        {
+          message: "File Required",
+        },
+        ""
+      );
+    }
   }
 
   imagekit.upload({
-    file: file?.data,
-    fileName: fileName,
+    file: file?.data || url,
+    fileName: fileName || url.split('/').pop().toString(),
   }).then(response => {
     // console.log('response', response?.url);
-    return callback(null, { url: response?.url})
+    return callback(null, { url: response?.url })
   }).catch(error => {
     console.log(error);
     return callback({
