@@ -12,8 +12,8 @@ const authenticateToken = (req, res, next) => {
   });
 }
 
-const generateAccessToken = (emailId) => {
-  return jwt.sign({ data: emailId }, "process.env.TOKEN_SECRET", {
+const generateAccessToken = ({emailId, userId}) => {
+  return jwt.sign({ emailId, userId }, "process.env.TOKEN_SECRET", {
     expiresIn: "24h",
   });
 }
