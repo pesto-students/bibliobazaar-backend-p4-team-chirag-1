@@ -1,6 +1,45 @@
 import mongoose from 'mongoose'
 import uniqueValidator from "mongoose-unique-validator"
 
+const addressSchema = new mongoose.Schema({
+  fullName: { 
+    type: String,
+    required: true
+  },
+  mobileNumber: { 
+    type: Number,
+    required: true
+  },
+  pincode: { 
+    type: Number,
+    required: true 
+  },
+  houseNumber: { 
+    type: String,
+    required: true 
+  },
+  area: { 
+    type: String,
+    required: true 
+  },
+  landmark: { type: String },
+  city: { 
+    type: String,
+    required: true 
+  },
+  state: { 
+    type: String,
+    required: true  
+  },
+  addressType: { 
+    type: String,
+    required: true 
+  },
+  isDefault: { type: Boolean },
+},
+  { timestamps: true }
+)
+
 const userSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -45,7 +84,8 @@ const userSchema = new mongoose.Schema({
       bookId: mongoose.ObjectId
     }],
     required: false,
-  }
+  },
+  addresses: [addressSchema]
 },
   { timestamps: true },
 );
