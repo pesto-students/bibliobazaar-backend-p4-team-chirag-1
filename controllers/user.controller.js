@@ -4,7 +4,7 @@ import { signUpService, loginService, updateProfilePictureService } from "../ser
 
 const signUp = (req, res, next) => {
   const { password } = req.body;
-
+  
   const salt = bcrypt.genSaltSync(10);
 
   req.body.password = bcrypt.hashSync(password, salt);

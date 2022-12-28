@@ -4,6 +4,8 @@ import unless from "express-unless"
 
 import { mongoConnect, PORT } from './config/config'
 import { userRouter } from './routes/userRoute'
+import { libraryRouter } from './routes/libraryRoute'
+import { searchRouter } from './routes/searchRouter'
 import { authenticateToken } from './middlewares/auth.js'
 import { errorHandler } from './middlewares/errors'
 
@@ -25,7 +27,6 @@ authenticateToken.unless = unless;
 app.use(
   authenticateToken.unless({
     path: [
-      // { url: "/", methods: ["GET"] },
       { url: "/user/signUp", methods: ["POST"] },
       { url: "/user/login", methods: ["POST"] },
     ],
@@ -40,8 +41,13 @@ app.get('/', (req, res) => {
   })
 })
 
+//Search Routes
+app.use('/search', searchRouter)
 // User Routes
-app.use('/user', userRouter)
+ app.use('/user', userRouter)
+//Library Routes
+app.use('/library', libraryRouter)
+
 
 // middleware for error responses
 app.use(errorHandler);
