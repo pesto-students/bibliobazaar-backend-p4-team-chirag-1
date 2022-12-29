@@ -15,12 +15,17 @@ const LibBookSchema = new mongoose.Schema({
       type:Number
     },
     rentedBook:{
-      type:Number
+      type:Number,
+      default:0
     },
     rentExpected:{
       type:Number,
       required:true
-    }
+    },
+    isActive: {
+      type: Boolean,
+      default: true
+  }
 });
 
 const librarySchema = new mongoose.Schema({

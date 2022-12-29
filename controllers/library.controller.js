@@ -1,4 +1,4 @@
-import { addBookService, loginService } from "../services/library.services";
+import { addBookService, findBookService, editBookService, removeBookService, bookDetailsService, getCollectionService, loginService } from "../services/library.services";
 
 const addBook = (req, res, next) => {
     const { userId, bookName, author, isbn, imageUrl, genre, language, quantity, rentExpected} = req.body;
@@ -11,12 +11,25 @@ const addBook = (req, res, next) => {
         data: results,
       });
     });
-  }
+}
+
+const findBook = (req, res, next) => {
+    const { userId, isbn} = req.body;
+    findBookService({ userId, isbn }, (error, results) => {
+      if (error) {
+        return next(error);
+      }
+      return res.status(200).send({
+        message: "Success",
+        data: results,
+      });
+    });
+}
 
 const editBook = (req, res, next) => {
-  const { emailId, password } = req.body;
+  const { userId, bookId, availableBook, rentExpected } = req.body;
 
-  loginService({ emailId, password }, (error, results) => {
+  editBookService({ userId, bookId, availableBook, rentExpected }, (error, results) => {
     if (error) {
       return next(error);
     }
@@ -26,10 +39,11 @@ const editBook = (req, res, next) => {
     });
   });
 }
+
 const removeBook = (req, res, next) => {
-    const { emailId, password } = req.body;
+    const { userId, bookId } = req.body;
   
-    loginService({ emailId, password }, (error, results) => {
+    removeBookService({ userId, bookId }, (error, results) => {
       if (error) {
         return next(error);
       }
@@ -38,12 +52,12 @@ const removeBook = (req, res, next) => {
         data: results,
       });
     });
-  }
+}
 
-  const bookDetails = (req, res, next) => {
-    const { emailId, password } = req.body;
+const bookDetails = (req, res, next) => {
+  const { userId, bookId } = req.body;
   
-    loginService({ emailId, password }, (error, results) => {
+    bookDetailsService({ userId, bookId }, (error, results) => {
       if (error) {
         return next(error);
       }
@@ -52,32 +66,34 @@ const removeBook = (req, res, next) => {
         data: results,
       });
     });
-  }
-  const getCollection = (req, res, next) => {
-    const { emailId, password } = req.body;
-  
-    loginService({ emailId, password }, (error, results) => {
-      if (error) {
-        return next(error);
-      }
-      return res.status(200).send({
-        message: "Success",
-        data: results,
-      });
-    });
-  }
-  const search = (req, res, next) => {
-    const { emailId, password } = req.body;
-  
-    loginService({ emailId, password }, (error, results) => {
-      if (error) {
-        return next(error);
-      }
-      return res.status(200).send({
-        message: "Success",
-        data: results,
-      });
-    });
-  }
+}
 
-export { search, addBook, editBook, removeBook, bookDetails, getCollection }
+const getCollection = (req, res, next) => {
+    const { userId } = req.body;
+  
+    getCollectionService({ userId }, (error, results) => {
+      if (error) {
+        return next(error);
+      }
+      return res.status(200).send({
+        message: "Success",
+        data: results,
+      });
+    });
+}
+
+const search = (req, res, next) => {
+    const { emailId, password } = req.body;
+  
+    loginService({ emailId, password }, (error, results) => {
+      if (error) {
+        return next(error);
+      }
+      return res.status(200).send({
+        message: "Success",
+        data: results,
+      });
+    });
+}
+
+export { search, findBook, addBook, editBook, removeBook, bookDetails, getCollection }

@@ -14,7 +14,7 @@ const addBookService = (params, callback) => {
   const { bookName, author, isbn, imageUrl, genre, language,} =  params;
   getBookId({ bookName, author, isbn, imageUrl, genre, language }, (error, bookId) => {
     if (error) {
-      return next(error);
+      return callback(error,"");
     }
   const Lib = Library.findOne({userId:params.userId})
   Lib.then((response) => {
@@ -53,12 +53,9 @@ const addBookService = (params, callback) => {
          },
           function (err, docs) {
             if (err){
-              return next(err);
+              return callback(err,"");
             }
-            return res.status(200).send({
-                message: "Success",
-                data: docs,
-            });
+            return callback(null, docs);
           }
         );
         
@@ -71,7 +68,7 @@ const addBookService = (params, callback) => {
         "bookId":bookId,
         "quantity":params.quantity,
         "availableBook":params.availableBook,
-        "rentedBook":params.rentedBook,
+        "rentedBook":params.availableBook,
         "rentExpected":params.rentExpected
         }
       }));
@@ -90,7 +87,165 @@ const addBookService = (params, callback) => {
   });
   });
 }
+const findBookService = (params, callback) => {
+  if (params.userId === undefined ||  params.bookId === undefined) {
+    return callback(
+      {
+        message: "userId, isbn required",
+      },
+      ""
+    );
+  }
 
+  const Lib = Library.findOne({"$and":[{"userId":params.userId},{"books.bookId":params.bookId}]})
+  Lib.then((response) => {
+    if(response != null)
+    {
+      return callback(null, JSON.stringify({ "bookFound": true }));
+        
+    }
+    else
+    {
+      return callback(null, JSON.stringify({ "bookFound": false }));
+    }
+  })
+  .catch((error) => {
+    return callback(error);
+  });
+
+}
+const editBookService = (params, callback) => {
+  if (params.userId === undefined ||  params.bookId === undefined || params.availableBook === undefined ||  params.rentExpected === undefined) {
+    return callback(
+      {
+        message: "userId, bookId, availableBook,rentExpected required",
+      },
+      ""
+    );
+  }
+
+const Lib = Library.findOne({"$and":[{"userId":params.userId},{"books.bookId":params.bookId}]})
+  Lib.then((response) => {
+    if(response != null)
+    {
+      Library.updateOne(
+        { "userId" : params.userId,
+          "books.bookId":params.bookId
+        }, 
+        { 
+          $set: { 
+            'books.rentExpected': params.rentExpected,
+            'books.availableBook': params.availableBook,
+            'books.quantity': parseInt(params.availableBook) + parseInt(response.rentedBook),
+        }
+       },
+        function (err, docs) {
+          if (err){
+            return callback(error);
+          }
+          return callback(null, docs);
+        }
+      );
+    }
+    else
+    {
+      return callback({
+          message: "Book not found",
+        },
+        "");
+    }
+  })
+  .catch((error) => {
+    return callback(error);
+  });
+
+}
+const removeBookService = (params, callback) => {
+  if (params.userId === undefined ||  params.bookId === undefined) {
+    return callback(
+      {
+        message: "userId, bookId, availableBook,rentExpected required",
+      },
+      ""
+    );
+  }
+
+      Library.updateOne(
+        { "userId" : params.userId,
+          "books.bookId":params.bookId
+        }, 
+        { 
+          $set: { 
+            'books.isActive': false,
+            'books.availableBook': 0
+        }
+       },
+        function (err, docs) {
+          if (err){
+            return callback(error);
+          }
+          return callback(null, docs);
+        }
+      );
+}
+const bookDetailsService = (params, callback) => {
+  if (params.userId === undefined ||  params.bookId === undefined) {
+    return callback(
+      {
+        message: "userId, isbn required",
+      },
+      ""
+    );
+  }
+
+  const Lib = Library.findOne({"$and":[{"userId":params.userId},{"books.bookId":params.bookId}]}).populate('books')
+  Lib.then((response) => {
+    if(response != null)
+    {
+      return callback(null, response);    
+    }
+    else
+    {
+      return callback({
+        message: "Book not found",
+      },
+      "");
+    }
+  })
+  .catch((error) => {
+    return callback(error);
+  });
+
+}
+const getCollectionService = (params, callback) => {
+  if (params.userId === undefined) {
+    return callback(
+      {
+        message: "userId required",
+      },
+      ""
+    );
+  }
+
+  const Lib = Library.find({"$and":[{"userId":params.userId},{"isActive":true}]}).populate('books')
+  Lib.then((response) => {
+    if(response != null)
+    {
+      return callback(null, response);    
+    }
+    else
+    {
+      return callback({
+        message: "Library not found",
+      },
+      "");
+    }
+  })
+  .catch((error) => {
+    return callback(error);
+  });
+
+}
 const loginService = async ({ emailId, password }, callback) => {
   if (emailId === undefined || password === undefined) {
     return callback(
@@ -119,4 +274,4 @@ const loginService = async ({ emailId, password }, callback) => {
   }
 }
 
-export { addBookService, loginService }
+export { addBookService, findBookService, editBookService, removeBookService, bookDetailsService, getCollectionService, loginService }
