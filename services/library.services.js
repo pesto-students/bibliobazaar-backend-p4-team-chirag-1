@@ -246,32 +246,35 @@ const getCollectionService = (params, callback) => {
   });
 
 }
-const loginService = async ({ emailId, password }, callback) => {
-  if (emailId === undefined || password === undefined) {
+const searchLibService = (params, callback) => {
+  if (params.searchKey === undefined) {
     return callback(
       {
-        message: "Email, Password Required",
+        message: "searchKey required",
       },
       ""
     );
   }
-  const user = await users.findOne({ emailId });
 
-  if (user != null) {
-    if (bcrypt.compareSync(password, user.password)) {
-      const token = generateAccessToken(emailId);
-      // call toJSON method applied during model instantiation
-      return callback(null, { ...user.toJSON(), token });
-    } else {
-      return callback({
-        message: "Invalid Username/Password!",
-      });
+  const Lib = Library.find({"$and":[{"books.availableBook":{$gt: 0}},{"books.isActive":true}]})
+              .populate('books',{ match: { "$or": [{ "bookName": { $regex : params.searchKey} },{ "author": { $regex : params.searchKey} },{ "isbn": { $regex : params.searchKey} }] }})
+  Lib.then((response) => {
+    if(response != null)
+    {
+      return callback(null, response);    
     }
-  } else {
-    return callback({
-      message: "Invalid Username/Password!",
-    });
-  }
+    else
+    {
+      return callback({
+        message: "Library not found",
+      },
+      "");
+    }
+  })
+  .catch((error) => {
+    return callback(error);
+  });
+
 }
 
-export { addBookService, findBookService, editBookService, removeBookService, bookDetailsService, getCollectionService, loginService }
+export { addBookService, findBookService, editBookService, removeBookService, bookDetailsService, getCollectionService, searchLibService }
