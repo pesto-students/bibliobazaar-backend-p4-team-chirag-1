@@ -6,7 +6,12 @@ import {
   updateProfilePictureService,
   getUserAccountService,
   getUpdateAccountService,
-  addAddressService
+  addAddressService,
+  editAddressService,
+  addressListService,
+  deleteAddressService,
+  addToCartService,
+  deleteFromCartService,
 } from "../services/user.services";
 
 const signUp = (req, res, next) => {
@@ -108,17 +113,77 @@ const addAddress = async (req, res, next) => {
 
 const editAddress = async (req, res, next) => {
   const { emailId, userId } = req.user
-  
+  const data = { ...req?.body }
+
+  editAddressService({ emailId, userId, data }, (error, results) => {
+    if (error) {
+      return next(error);
+    }
+    return res.status(200).send({
+      message: "Success",
+      data: results,
+    });
+  });
 }
 
 const deleteAddress = async (req, res, next) => {
   const { emailId, userId } = req.user
+  const data =  req?.body 
   
+  deleteAddressService({ emailId, userId, data }, (error, results) => {
+    if (error) {
+      return next(error);
+    }
+    return res.status(200).send({
+      message: "Success",
+      data: results,
+    });
+  });
 }
 
 const addressesList = async (req, res, next) => {
   const { emailId, userId } = req.user
-  
+
+  addressListService({ emailId, userId }, (error, results) => {
+    if (error) {
+      return next(error);
+    }
+    return res.status(200).send({
+      message: "Success",
+      data: results,
+    });
+  });
+}
+
+const addToCart = (req, res, next) => {
+  const { emailId, userId } = req.user
+  const data = req?.body 
+
+  addToCartService({ emailId, userId, data }, (error, results) => {
+    if (error) {
+      return next(error);
+    }
+    return res.status(200).send({
+      message: "Success",
+      data: results,
+    });
+  });
+}
+
+
+const deleteFromCart = (req, res, next) => {
+  const { emailId, userId } = req.user
+  const data = req?.body 
+
+  deleteFromCartService({ emailId, userId, data }, (error, results) => {
+    if (error) {
+      return next(error);
+    }
+    return res.status(200).send({
+      message: "Success",
+      data: results,
+    });
+  });
 }
 
 export {
@@ -130,5 +195,7 @@ export {
   addAddress,
   editAddress,
   deleteAddress,
-  addressesList
+  addressesList,
+  addToCart,
+  deleteFromCart
 }
