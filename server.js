@@ -33,11 +33,8 @@ authenticateToken.unless = unless;
 app.use(
   authenticateToken.unless({
     path: [
-<<<<<<< HEAD
       { url: "/search", methods: ["POST"] },
-=======
       { url: "/", methods: ["GET"] },
->>>>>>> 2e4b2b60b7b4486e504770f3e1f0ae5bcae395d1
       { url: "/user/signUp", methods: ["POST"] },
       { url: "/user/login", methods: ["POST"] },
       // Added Temporarily to check payments
