@@ -1,20 +1,21 @@
 
 import ImageKit from "imagekit";
+import * as dotenv from 'dotenv'
+dotenv.config()
 
 // SDK initialization
-
-// var imagekit = new ImageKit({
-//   publicKey : 'process.env.IMAGEKIT_PUBLIC_KEY',
-//   privateKey : 'process.env.IMAGEKIT_PRIVATE_KEY',
-//   urlEndpoint : 'process.env.IMAGEKIT_URL'
-// });
-
-// Need to check why env is not accessible
 var imagekit = new ImageKit({
-  publicKey: "public_XG6CXMH60Rb/+2YhrO3ymBG2KnA=",
-  privateKey: "private_HXJBqgv/JQ8zBKnPdaDunzRlFD4=",
-  urlEndpoint: "https://ik.imagekit.io/biblioBazaar"
+  publicKey : process.env.IMAGEKIT_PUBLIC_KEY,
+  privateKey : process.env.IMAGEKIT_PRIVATE_KEY,
+  urlEndpoint : process.env.IMAGEKIT_URL
 });
+
+// Temporary
+// var imagekit = new ImageKit({
+//   publicKey: "public_XG6CXMH60Rb/+2YhrO3ymBG2KnA=",
+//   privateKey: "private_HXJBqgv/JQ8zBKnPdaDunzRlFD4=",
+//   urlEndpoint: "https://ik.imagekit.io/biblioBazaar"
+// });
 
 const uploadService = ({ file, fileName, url }, callback) => {
   if (file === undefined || fileName === undefined) {

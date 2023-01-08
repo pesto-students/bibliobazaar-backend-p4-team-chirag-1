@@ -100,11 +100,11 @@ const getUpdateAccountService = async ({ emailId, userId, firstName, lastName, p
   const user = await users.findOne({ emailId });
 
   const data = {
-    firstName: firstName? firstName: user?.firstName,
-    lastName: lastName? lastName: user?.lastName,
-    phoneNumber: phoneNumber? phoneNumber: user?.phoneNumber,
-    gender: gender? gender: user?.gender,
-    dob: dob? dob: user?.dob,
+    firstName: firstName ? firstName : user?.firstName,
+    lastName: lastName ? lastName : user?.lastName,
+    phoneNumber: phoneNumber ? phoneNumber : user?.phoneNumber,
+    gender: gender ? gender : user?.gender,
+    dob: dob ? dob : user?.dob,
   }
   if (user != null) {
     const updateUser = await users.findByIdAndUpdate(
@@ -121,13 +121,15 @@ const getUpdateAccountService = async ({ emailId, userId, firstName, lastName, p
 }
 
 const addAddressService = async ({ emailId, userId, data }, callback) => {
-  console.log('data', data)
   const user = await users.findOne({ emailId });
-  let currentAddresses = user?.addresses ? user.addresses: []
+  let currentAddresses = user?.addresses ? user.addresses : []
   if (user != null) {
+    if (data?.isDefault) {
+      currentAddresses.map((address) => address.isDefault = false)
+    }
     const updateUser = await users.findByIdAndUpdate(
       user._id,
-      { addresses: [ ...currentAddresses, data ]},
+      { addresses: [...currentAddresses, data] },
       { new: true }
     )
     return callback(null, updateUser);
@@ -138,11 +140,135 @@ const addAddressService = async ({ emailId, userId, data }, callback) => {
   }
 }
 
+const editAddressService = async ({ emailId, userId, data }, callback) => {
+  const user = await users.findOne({ emailId });
+
+  if (user != null) {
+
+    let currentAddresses = [...user.addresses]
+    let filteredAddresses = currentAddresses.filter(item => item._id.toString() !== data?.addressId);
+    delete data?.addressId
+    if (data?.isDefault) {
+      filteredAddresses.map((address) => address.isDefault = false)
+    }
+    const updateUser = await users.findByIdAndUpdate(
+      user._id,
+      { addresses: [...filteredAddresses, {...data}] },
+      { new: true }
+    )
+
+    return callback(null, updateUser);
+  } else {
+    return callback({
+      message: "Invalid",
+    });
+  }
+}
+
+const deleteAddressService = async ({ emailId, userId, data }, callback) => {
+  const user = await users.findOne({ emailId });
+
+  if (user != null) {
+
+    let currentAddresses = [...user.addresses]
+    let filteredAddresses = currentAddresses.filter(item => item._id.toString() !== data?.addressId);
+    const updateUser = await users.findByIdAndUpdate(
+      user._id,
+      { addresses: filteredAddresses },
+      { new: true }
+    )
+
+    return callback(null, updateUser);
+  } else {
+    return callback({
+      message: "Invalid",
+    });
+  }
+}
+
+const addressListService = async ({ emailId, userId }, callback) => {
+  const user = await users.findOne({ emailId });
+
+  if (user != null) {
+    return callback(null, user.addresses);
+  } else {
+    return callback({
+      message: "Invalid",
+    });
+  }
+}
+
+const addToCartService = async ({ emailId, userId, data }, callback) => {
+  if (data.bookId === undefined || data.ownerUserId === undefined) {
+    return callback(
+      {
+        message: "bookId, ownerUserId Required",
+      },
+      ""
+    );
+  }
+  const user = await users.findOne({ emailId });
+
+  if (user != null) {
+
+    let currentCartItems = user?.cart.contents ? user.cart.contents : []
+
+    const updateCart = await users.findByIdAndUpdate(
+      user._id,
+      { cart: { contents: [ ...currentCartItems, data]} },
+      { new: true }
+    )
+
+    return callback(null, updateCart);
+  } else {
+    return callback({
+      message: "Invalid",
+    });
+  }
+}
+
+const deleteFromCartService = async ({ emailId, userId, data }, callback) => {
+  if (data.id === undefined) {
+    return callback(
+      {
+        message: "id Required",
+      },
+      ""
+    );
+  }
+  const user = await users.findOne({ emailId });
+
+  if (user != null) {
+
+    let currentCartItems = [...user?.cart.contents]
+    let filteredCartItems = currentCartItems.filter(item => item._id.toString() !== data?.id);
+
+    const updateCart = await users.findByIdAndUpdate(
+      user._id,
+      { cart: { contents: [ ...filteredCartItems ]} },
+      { new: true }
+    )
+
+    return callback(null, updateCart);
+  } else {
+    return callback({
+      message: "Invalid",
+    });
+  }
+}
+
+
+
 export {
   signUpService,
   loginService,
   updateProfilePictureService,
   getUserAccountService,
   getUpdateAccountService,
-  addAddressService
+  addAddressService,
+  editAddressService,
+  deleteAddressService,
+  addressListService,
+  addToCartService,
+  deleteFromCartService
 }

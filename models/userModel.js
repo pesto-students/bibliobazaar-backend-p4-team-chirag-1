@@ -2,6 +2,9 @@ import mongoose from 'mongoose'
 import uniqueValidator from "mongoose-unique-validator"
 
 const addressSchema = new mongoose.Schema({
+  addressId: {
+    type: mongoose.Schema.Types.ObjectId,
+  },
   fullName: { 
     type: String,
     required: true
@@ -81,7 +84,10 @@ const userSchema = new mongoose.Schema({
   },
   cart: {
     contents: [{
-      bookId: mongoose.ObjectId
+      // bookId: mongoose.Schema.Types.ObjectId,
+      // ownerUserId: mongoose.Schema.Types.ObjectId
+      bookId: String,
+      ownerUserId: String
     }],
     required: false,
   },
@@ -92,6 +98,13 @@ const userSchema = new mongoose.Schema({
 
 const users = mongoose.model('users', userSchema);
 
+addressSchema.set("toJSON", {
+  transform: (document, returnedObject) => {
+    returnedObject.addressId = returnedObject._id.toString();
+    delete returnedObject._id;
+    delete returnedObject.__v;
+  },
+});
 /**
  *  Here we are creating and setting an id property and 
     removing _id, __v, and the password hash which we do not need 
