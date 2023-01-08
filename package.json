@@ -19,6 +19,8 @@
   "homepage": "https://github.com/YATHENDRA1995/bibliobazaar-backend#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-fileupload": "^1.4.0",
     "express-unless": "^1.0.0",
@@ -27,7 +29,8 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.8.0",
     "mongoose-unique-validator": "^3.0.0",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "razorpay": "^2.8.4"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"

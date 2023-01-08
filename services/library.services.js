@@ -242,34 +242,22 @@ const getCollectionService = (params, callback) => {
 
 }
 const searchLibService = (params, callback) => {
-  if (params.searchKey === undefined) {
+  if (params.q === undefined) {
     return callback(
       {
-        message: "searchKey required",
+        message: "Search Key required",
       },
       ""
     );
   }
 
-  const Lib = Library.find({"$and":[{"books.availableBook":{$gt: 0}},{"books.isActive":true}]})
-              .populate('books',{ match: { "$or": [{ "bookName": { $regex : params.searchKey} },{ "author": { $regex : params.searchKey} },{ "isbn": { $regex : params.searchKey} }] }})
-  Lib.then((response) => {
-    if(response != null)
-    {
-      return callback(null, response);    
+ 
+  const { bookName, author, isbn, imageUrl, genre, language,} =  params;
+  SearchBookId({ bookName, author, isbn, imageUrl, genre, language }, (error, bookId) => {
+    if (error) {
+      return callback(error,"");
     }
-    else
-    {
-      return callback({
-        message: "Library not found",
-      },
-      "");
-    }
-  })
-  .catch((error) => {
-    return callback(error);
   });
-
 }
 
 export { addBookService, findBookService, editBookService, removeBookService, bookDetailsService, getCollectionService, searchLibService }
