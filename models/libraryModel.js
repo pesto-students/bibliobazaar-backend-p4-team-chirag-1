@@ -3,13 +3,9 @@ import uniqueValidator from "mongoose-unique-validator"
 
 const LibBookSchema = new mongoose.Schema({
     bookId:{
-      type: mongoose.Schema.Types.ObjectId,
+      type: mongoose.SchemaTypes.ObjectId,
       ref:"books",
       required: true,
-    },
-    quantity:{
-      type:Number,
-      required:true
     },
     availableBook:{
       type:Number
@@ -21,16 +17,12 @@ const LibBookSchema = new mongoose.Schema({
     rentExpected:{
       type:Number,
       required:true
-    },
-    isActive: {
-      type: Boolean,
-      default: true
-  }
+    }
 });
 
 const librarySchema = new mongoose.Schema({
   userId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: mongoose.SchemaTypes.ObjectId,
     ref:"users",
     required: true,
   },

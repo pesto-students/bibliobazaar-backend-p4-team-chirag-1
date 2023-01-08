@@ -1,5 +1,6 @@
 import Library from "../models/libraryModel"
-import { getBookId } from "../services/book.services";
+import { getBookId, FindBookId, SearchBookId } from "../services/book.services";
+import mongoose from "mongoose";
 
 const addBookService = (params, callback) => {
   if (params.userId === undefined || params.bookName === undefined || params.author === undefined ||
@@ -42,13 +43,11 @@ const addBookService = (params, callback) => {
         Library.updateOne(
           { userId : params.userId }, 
           { $push: { 
-              books: JSON.stringify({
+              books: {
                 "bookId":bookId,
-                "quantity":params.quantity,
-                "availableBook":params.availableBook,
-                "rentedBook":params.rentedBook,
+                "availableBook":params.quantity,
                 "rentExpected":params.rentExpected
-              })
+              }
           }
          },
           function (err, docs) {
@@ -62,16 +61,15 @@ const addBookService = (params, callback) => {
     }
     else
     {
-      const Lib2 = new Library(JSON.stringify({
+      const Lib2 = new Library({
         "userId":params.userId,
         "books": {
         "bookId":bookId,
         "quantity":params.quantity,
-        "availableBook":params.availableBook,
-        "rentedBook":params.availableBook,
+        "availableBook":params.quantity,
         "rentExpected":params.rentExpected
         }
-      }));
+      });
       Lib2
         .save()
         .then((docs) => {
@@ -88,7 +86,7 @@ const addBookService = (params, callback) => {
   });
 }
 const findBookService = (params, callback) => {
-  if (params.userId === undefined ||  params.bookId === undefined) {
+  if (params.userId === undefined ||  params.isbn === undefined) {
     return callback(
       {
         message: "userId, isbn required",
@@ -96,23 +94,35 @@ const findBookService = (params, callback) => {
       ""
     );
   }
+  
+  const { isbn } =  params;
+  FindBookId({ isbn }, (error, bookId) => {
+    if (error) { 
+      return callback(error,"");
+    }
 
-  const Lib = Library.findOne({"$and":[{"userId":params.userId},{"books.bookId":params.bookId}]})
-  Lib.then((response) => {
-    if(response != null)
+    if(bookId == null)
     {
-      return callback(null, JSON.stringify({ "bookFound": true }));
-        
+       return callback(null,{'bookFound':false});
     }
-    else
-    {
-      return callback(null, JSON.stringify({ "bookFound": false }));
-    }
-  })
-  .catch((error) => {
-    return callback(error);
+    
+    const Lib = Library.find({ 'userId': mongoose.Types.ObjectId(params.userId), books:{$elemMatch:{bookId :mongoose.Types.ObjectId(bookId)}}})
+    Lib.then((response) => {
+      if(response != null)
+      { 
+        return callback(null,{'bookFound':true});
+      }
+      else
+      {
+        return callback(null,{'bookFound':false});
+      }
+    })
+    .catch((error) => {
+      return callback(error);
+    });
   });
 
+   
 }
 const editBookService = (params, callback) => {
   if (params.userId === undefined ||  params.bookId === undefined || params.availableBook === undefined ||  params.rentExpected === undefined) {
@@ -124,65 +134,46 @@ const editBookService = (params, callback) => {
     );
   }
 
-const Lib = Library.findOne({"$and":[{"userId":params.userId},{"books.bookId":params.bookId}]})
-  Lib.then((response) => {
-    if(response != null)
-    {
-      Library.updateOne(
-        { "userId" : params.userId,
-          "books.bookId":params.bookId
-        }, 
-        { 
-          $set: { 
-            'books.rentExpected': params.rentExpected,
-            'books.availableBook': params.availableBook,
-            'books.quantity': parseInt(params.availableBook) + parseInt(response.rentedBook),
+  Library.updateOne(
+    { "userId" : params.userId,
+      "books.bookId":params.bookId
+    }, 
+    { 
+      $set: { 
+          'books.$.rentExpected': params.rentExpected,
+          'books.$.availableBook': params.availableBook
+      }
+    },
+    function (err, docs) {
+        if (err){
+          return callback(err);
         }
-       },
-        function (err, docs) {
-          if (err){
-            return callback(error);
-          }
-          return callback(null, docs);
-        }
-      );
-    }
-    else
-    {
-      return callback({
-          message: "Book not found",
-        },
-        "");
-    }
-  })
-  .catch((error) => {
-    return callback(error);
-  });
-
+        return callback(null, docs);
+      }
+    );
 }
 const removeBookService = (params, callback) => {
   if (params.userId === undefined ||  params.bookId === undefined) {
     return callback(
       {
-        message: "userId, bookId, availableBook,rentExpected required",
+        message: "userId, bookId required",
       },
       ""
     );
   }
 
       Library.updateOne(
-        { "userId" : params.userId,
-          "books.bookId":params.bookId
+        { 
+          "userId" : mongoose.Types.ObjectId(params.userId)
         }, 
         { 
-          $set: { 
-            'books.isActive': false,
-            'books.availableBook': 0
+          $pull: { 
+            'books': { 'bookId':mongoose.Types.ObjectId(params.bookId) }
         }
        },
         function (err, docs) {
           if (err){
-            return callback(error);
+            return callback(err);
           }
           return callback(null, docs);
         }
@@ -198,11 +189,15 @@ const bookDetailsService = (params, callback) => {
     );
   }
 
-  const Lib = Library.findOne({"$and":[{"userId":params.userId},{"books.bookId":params.bookId}]}).populate('books')
+  const Lib = Library.findOne({ "userId" : params.userId}).populate('books.bookId')
   Lib.then((response) => {
     if(response != null)
     {
-      return callback(null, response);    
+      var BookItem = response.books?.filter((item) =>{
+         
+         return item.bookId._id.toString() == params.bookId
+      });
+      return callback(null, BookItem);    
     }
     else
     {
@@ -227,7 +222,7 @@ const getCollectionService = (params, callback) => {
     );
   }
 
-  const Lib = Library.find({"$and":[{"userId":params.userId},{"isActive":true}]}).populate('books')
+  const Lib = Library.find({"userId":params.userId}).populate('books.bookId')
   Lib.then((response) => {
     if(response != null)
     {

@@ -2,13 +2,12 @@ import mongoose from 'mongoose'
 import uniqueValidator from "mongoose-unique-validator"
 
 const bookSchema = new mongoose.Schema({
-  _id: {type: String},
-  bookName: {
+ bookName: {
     type: String,
     required: true,
   },
   author: {
-    type: String,
+    type: [String],
     required: true,
   },
   isbn: {
@@ -17,11 +16,14 @@ const bookSchema = new mongoose.Schema({
     unique: true,
     lowercase: true,
   },
+  description: {
+    type: String
+  },
   imageUrl: {
     type: String
   },
   genre: {
-    type: String
+    type: [String]
   },
   language: {
     type: String

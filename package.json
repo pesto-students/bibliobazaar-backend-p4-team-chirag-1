@@ -23,6 +23,7 @@
     "express-fileupload": "^1.4.0",
     "express-unless": "^1.0.0",
     "imagekit": "^4.1.2",
+    "iso-639-1": "^2.1.15",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.8.0",
     "mongoose-unique-validator": "^3.0.0",
