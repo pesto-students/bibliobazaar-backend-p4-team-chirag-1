@@ -4,10 +4,10 @@ import mongoose from "mongoose";
 
 const addBookService = (params, callback) => {
   if (params.userId === undefined || params.bookName === undefined || params.author === undefined ||
-    params.isbn === undefined || params.quantity === undefined || params.rentExpected === undefined ) {
+    params.isbn === undefined || params.availableBook === undefined || params.rentExpected === undefined ) {
     return callback(
       {
-        message: "userId, bookName, author, isbn, quantity, rentExpected",
+        message: "userId, bookName, author, isbn, availableBook, rentExpected",
       },
       ""
     );
@@ -45,7 +45,7 @@ const addBookService = (params, callback) => {
           { $push: { 
               books: {
                 "bookId":bookId,
-                "availableBook":params.quantity,
+                "availableBook":params.availableBook,
                 "rentExpected":params.rentExpected
               }
           }
@@ -65,8 +65,7 @@ const addBookService = (params, callback) => {
         "userId":params.userId,
         "books": {
         "bookId":bookId,
-        "quantity":params.quantity,
-        "availableBook":params.quantity,
+        "availableBook":params.availableBook,
         "rentExpected":params.rentExpected
         }
       });
@@ -106,7 +105,7 @@ const findBookService = (params, callback) => {
        return callback(null,{'bookFound':false});
     }
     
-    const Lib = Library.find({ 'userId': mongoose.Types.ObjectId(params.userId), books:{$elemMatch:{bookId :mongoose.Types.ObjectId(bookId)}}})
+    const Lib = Library.find({ 'userId': mongoose.Types.ObjectId(params.userId), 'books':{$elemMatch:{'bookId' :mongoose.Types.ObjectId(bookId)}}})
     Lib.then((response) => {
       if(response != null)
       { 
@@ -252,11 +251,79 @@ const searchLibService = (params, callback) => {
   }
 
  
-  const { bookName, author, isbn, imageUrl, genre, language,} =  params;
-  SearchBookId({ bookName, author, isbn, imageUrl, genre, language }, (error, bookId) => {
+  const { q } =  params;
+  SearchBookId({ q }, (error, bookIdArray) => {
     if (error) {
       return callback(error,"");
     }
+    console.log(bookIdArray);
+    const Lib = Library.find({ "books":{ "$elemMatch":{"availableBook" : {"$gt":"0"}, "booksId":{ "$in": bookIdArray }}}})
+    Lib.then((response) => {
+      console.log(response);
+      return callback(null,response)
+      if(response != null)
+      {
+          let bookExists = false;
+          for (var index = 0; index < response.books.length; ++index) {
+            var tempBook = response.books[index];
+            if(tempBook.bookId == bookId){
+              bookExists = true;
+              break;
+            }
+           }
+  
+          if(bookExists)
+          {
+            return callback(
+              {
+                message: "Book already present in library",
+              },
+              ""
+            );
+          }
+          
+          Library.updateOne(
+            { userId : params.userId }, 
+            { $push: { 
+                books: {
+                  "bookId":bookId,
+                  "availableBook":params.availableBook,
+                  "rentExpected":params.rentExpected
+                }
+            }
+           },
+            function (err, docs) {
+              if (err){
+                return callback(err,"");
+              }
+              return callback(null, docs);
+            }
+          );
+          
+      }
+      else
+      {
+        const Lib2 = new Library({
+          "userId":params.userId,
+          "books": {
+          "bookId":bookId,
+          "availableBook":params.availableBook,
+          "rentExpected":params.rentExpected
+          }
+        });
+        Lib2
+          .save()
+          .then((docs) => {
+            return callback(null, docs);
+          })
+          .catch((error) => {
+            return callback(error);
+          });
+      }
+    })
+    .catch((error) => {
+      return callback(error);
+    });
   });
 }
 

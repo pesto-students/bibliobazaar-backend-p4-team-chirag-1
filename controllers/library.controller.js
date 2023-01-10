@@ -1,8 +1,8 @@
 import { addBookService, findBookService, editBookService, removeBookService, bookDetailsService, getCollectionService, searchLibService } from "../services/library.services";
 
 const addBook = (req, res, next) => {
-    const { userId, bookName, author, isbn, imageUrl, genre, language, quantity, rentExpected} = req.body;
-    addBookService({ userId, bookName, author, isbn, imageUrl, genre, language, quantity, rentExpected }, (error, results) => {
+    const { userId, bookName, author, isbn, imageUrl, genre, language, availableBook, rentExpected} = req.body;
+    addBookService({ userId, bookName, author, isbn, imageUrl, genre, language, availableBook, rentExpected }, (error, results) => {
       if (error) {
         return next(error);
       }
@@ -83,9 +83,11 @@ const getCollection = (req, res, next) => {
 }
 
 const search = (req, res, next) => {
-    const { searchKey } = req.body;
-  
-    searchLibService({ searchKey }, (error, results) => {
+   
+    var params = {
+      q: req.query.q,
+     };
+    searchLibService(params, (error, results) => {
       if (error) {
         return next(error);
       }
