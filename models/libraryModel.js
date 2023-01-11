@@ -34,6 +34,6 @@ const librarySchema = new mongoose.Schema({
   { timestamps: true },
 );
 
-const library = mongoose.model('library', librarySchema);
+const library = mongoose.model('libraries', librarySchema);
 librarySchema.plugin(uniqueValidator, { message: "Library for userId already present" });
 export default library

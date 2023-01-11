@@ -24,7 +24,6 @@ const getIssuedHistory = (req, res, next) => {
       });
     });
 }
-
 const getOfferedHistory = (req, res, next) => {
     const { ownerId } = req.body;
     OfferedHistoryService({ ownerId }, (error, results) => {
@@ -37,7 +36,6 @@ const getOfferedHistory = (req, res, next) => {
       });
     });
 }
-
 const addHistory = (req, res, next) => {
   const { bookArray , issuerId,
           paymentMode, trackingID, address, subTotal, deliveryCharge,

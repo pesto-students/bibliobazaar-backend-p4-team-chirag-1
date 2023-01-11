@@ -93,8 +93,10 @@ const OfferedHistoryService = (params, callback) => {
         var offeredRecords = [];
         for(var i = 0; i<response.length;i++)
         {
-              for(var j = 0;j<response[i].books.length;i++)
+              for(var j = 0;j<response[i].books.length;j++)
               {
+                if(response[i].books[j].ownerId == params.ownerId)
+                {
                   var temp = {
                     "rentedOn":response[i].rentedOn,
                     "returnDate":response[i].returnDate,
@@ -107,6 +109,7 @@ const OfferedHistoryService = (params, callback) => {
                     "imageUrl":response[i].books[j].bookId.imageUrl
                   }
                   offeredRecords.push(temp);
+                }
               }
         }
         return callback(null, offeredRecords);    

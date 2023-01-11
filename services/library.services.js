@@ -242,12 +242,55 @@ const getCollectionService = (params, callback) => {
 }
 const searchLibService = (params, callback) => {
   if (params.q === undefined) {
-    return callback(
+   
+    const Lib = Library.find( { "books":{ $elemMatch:{"availableBook" : {$gt:0}}}}).populate('books.bookId');
+    Lib.then((response) => {
+      
+      if(response != null)
+      { 
+        var BooksItem = [];
+        for(var i = 0; i<response.length;i++)
+        {
+              for(var j = 0;j<response[i].books.length;j++)
+              {
+                if(response[i].books[j].availableBook  > 0 )
+                {
+                  var temp = {
+                    "userId":response[i].userId,
+                    "rentExpected":response[i].books[j].rentExpected,
+                    "availableBook":response[i].books[j].availableBook,
+                    "bookId":response[i].books[j].bookId._id,
+                    "bookName":response[i].books[j].bookId.bookName,
+                    "author":response[i].books[j].bookId.author,
+                    "isbn":response[i].books[j].bookId.isbn,
+                    "imageUrl":response[i].books[j].bookId?.imageUrl
+                  }
+                  BooksItem.push(temp);
+                }
+              }
+              if(BooksItem.length == 0)
+              {
+                return callback({
+                  message: "No books found",
+                },
+                "");
+              }
+             return callback(null, BooksItem); 
+            
+        }
+      }
+      else
       {
-        message: "Search Key required",
-      },
-      ""
-    );
+        return callback({
+          message: "No books found",
+        },
+        "");
+      }
+    })
+    .catch((error) => {
+      return callback(error);
+    });
+    return;
   }
 
  
@@ -256,11 +299,12 @@ const searchLibService = (params, callback) => {
     if (error) {
       return callback(error,"");
     }
-    console.log(bookIdArray);
-    const Lib = Library.find({ "books":{ "$elemMatch":{"availableBook" : {"$gt":"0"}, "booksId":{ "$in": bookIdArray }}}})
+    const Lib = Library.find({
+                        $and:[
+                          { "books":{ $elemMatch:{"availableBook" : {$gt:0}}}},
+                          { "books":{ $elemMatch:{"bookId" : { $in:  bookIdArray }}}},
+                        ]}).populate('books.bookId');
     Lib.then((response) => {
-      console.log(response);
-      return callback(null,response)
       if(response != null)
       {
           let bookExists = false;
