@@ -7,6 +7,8 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 
 import { userRouter } from './routes/userRoute'
+import { libraryRouter } from './routes/libraryRoute'
+import { searchRouter } from './routes/searchRouter'
 import { authenticateToken } from './middlewares/auth.js'
 import { errorHandler } from './middlewares/errors'
 import { uploadRouter } from './routes/uploadRoute'
@@ -31,6 +33,7 @@ authenticateToken.unless = unless;
 app.use(
   authenticateToken.unless({
     path: [
+      { url: "/search", methods: ["POST"] },
       { url: "/", methods: ["GET"] },
       { url: "/user/signUp", methods: ["POST"] },
       { url: "/user/login", methods: ["POST"] },
@@ -51,9 +54,12 @@ app.get('/', (req, res) => {
   })
 })
 
-// User Routes
 app.use('/user', userRouter)
 app.use('/',uploadRouter)
+//Search Routes
+app.use('/search', searchRouter)
+//Library Routes
+app.use('/library', libraryRouter)
 
 // Payment Routes
 app.use('/payment', paymentRouter)
