@@ -13,6 +13,7 @@ import { authenticateToken } from './middlewares/auth.js'
 import { errorHandler } from './middlewares/errors'
 import { uploadRouter } from './routes/uploadRoute'
 import { paymentRouter } from './routes/paymentRoute'
+import { RentRouter } from './routes/rentRoute'
 
 const app = express()
 app.use(cors());
@@ -33,7 +34,7 @@ authenticateToken.unless = unless;
 app.use(
   authenticateToken.unless({
     path: [
-      { url: "/search", methods: ["POST"] },
+      { url: "/library/search", methods: ["POST"] },
       { url: "/", methods: ["GET"] },
       { url: "/user/signUp", methods: ["POST"] },
       { url: "/user/login", methods: ["POST"] },
@@ -63,6 +64,9 @@ app.use('/library', libraryRouter)
 
 // Payment Routes
 app.use('/payment', paymentRouter)
+
+// Rent Routes
+app.use('/rent', RentRouter)
 
 // middleware for error responses
 app.use(errorHandler);

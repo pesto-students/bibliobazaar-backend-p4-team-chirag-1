@@ -1,5 +1,5 @@
 import { searchService} from "../services/search.services";
-import { GOOGLE_API_KEY } from '../config/config'
+import { GOOGLE_API_KEY,maxResults } from '../config/config'
 import ISO6391 from 'iso-639-1';
 const searchBook = (req, res, next) => {
     if (!req.query) {
@@ -8,7 +8,7 @@ const searchBook = (req, res, next) => {
     var params = {
         q: req.query.q,
         printType:'books',
-        maxResults:40,
+        maxResults:maxResults,
         key:GOOGLE_API_KEY
     };
    

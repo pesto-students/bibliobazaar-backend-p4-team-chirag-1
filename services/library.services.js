@@ -1,6 +1,7 @@
 import Library from "../models/libraryModel"
 import { getBookId, FindBookId, SearchBookId } from "../services/book.services";
 import mongoose from "mongoose";
+import { maxResults } from '../config/config'
 
 const addBookService = (params, callback) => {
   if (params.userId === undefined || params.bookName === undefined || params.author === undefined ||
@@ -241,9 +242,9 @@ const getCollectionService = (params, callback) => {
 
 }
 const searchLibService = (params, callback) => {
+
   if (params.q === undefined) {
-   
-    const Lib = Library.find( { "books":{ $elemMatch:{"availableBook" : {$gt:0}}}}).populate('books.bookId');
+    Lib = Library.find( { "books":{ $elemMatch:{"availableBook" : {$gt:0}}}}).populate('books.bookId');
     Lib.then((response) => {
       
       if(response != null)
@@ -253,12 +254,15 @@ const searchLibService = (params, callback) => {
         {
               for(var j = 0;j<response[i].books.length;j++)
               {
-                if(response[i].books[j].availableBook  > 0 )
+                if(response[i].books[j].availableBook > 0 && 
+                  ( params.lang === undefined || (params.lang && params.lang == response[i].books[j].bookId.language)) &&
+                  ( params.genre === undefined || (params.genre && response[i].books[j].bookId.genre.indexOf(params.genre) > -1 )))
                 {
                   var temp = {
                     "userId":response[i].userId,
                     "rentExpected":response[i].books[j].rentExpected,
                     "availableBook":response[i].books[j].availableBook,
+                    "createdAt":response[i].books[j].createdAt,
                     "bookId":response[i].books[j].bookId._id,
                     "bookName":response[i].books[j].bookId.bookName,
                     "author":response[i].books[j].bookId.author,
@@ -275,9 +279,32 @@ const searchLibService = (params, callback) => {
                 },
                 "");
               }
-             return callback(null, BooksItem); 
-            
-        }
+             if(params.order == "desc")
+             {
+                BooksItem.sort((a,b) => { 
+                  if (a[params.sortBy] > b[params.sortBy]) {
+                      return -1;
+                  }
+                  if (a[params.sortBy] < b[params.sortBy]) {
+                      return 1;
+                  }
+                  return 0;
+                });
+             }
+             else
+             {
+                BooksItem.sort((a,b) => { 
+                  if (a[params.sortBy] < b[params.sortBy]) {
+                      return -1;
+                  }
+                  if (a[params.sortBy] > b[params.sortBy]) {
+                      return 1;
+                  }
+                  return 0;
+                });
+             }
+             return callback(null, BooksItem.slice(params.startIndex,params.startIndex+maxResults)); 
+          }
       }
       else
       {
@@ -289,86 +316,101 @@ const searchLibService = (params, callback) => {
     })
     .catch((error) => {
       return callback(error);
+    }); 
+  }
+  else
+  {
+    const { q } =  params;
+    SearchBookId({ q }, (error, bookIdArray) => {
+      if (error) {
+        return callback(error,"");
+      }
+      console.log(bookIdArray);
+      const Lib = Library.find({
+                          $and:[
+                            { "books":{ $elemMatch:{"availableBook" : {$gt:0}}}},
+                            { "books":{ $elemMatch:{"bookId" : { $in:  bookIdArray }}}},
+                          ]}).populate('books.bookId');
+      
+                          Lib.then((response) => {
+      
+                            if(response != null)
+                            { 
+                              var BooksItem = [];
+                              for(var i = 0; i<response.length;i++)
+                              {
+                                    for(var j = 0;j<response[i].books.length;j++)
+                                    {
+                                      if( response[i].books[j].availableBook > 0 && 
+                                          bookIdArray.some(function (a) {
+                                            return a.equals(response[i].books[j].bookId._id);
+                                          }) && 
+                                        ( params.lang === undefined || (params.lang && params.lang == response[i].books[j].bookId.language)) &&
+                                        ( params.genre === undefined || (params.genre && response[i].books[j].bookId.genre.indexOf(params.genre) > -1 )))
+                                      {
+                                        var temp = {
+                                          "userId":response[i].userId,
+                                          "rentExpected":response[i].books[j].rentExpected,
+                                          "availableBook":response[i].books[j].availableBook,
+                                          "createdAt":response[i].books[j].createdAt,
+                                          "bookId":response[i].books[j].bookId._id,
+                                          "bookName":response[i].books[j].bookId.bookName,
+                                          "author":response[i].books[j].bookId.author,
+                                          "isbn":response[i].books[j].bookId.isbn,
+                                          "imageUrl":response[i].books[j].bookId?.imageUrl
+                                        }
+                                        BooksItem.push(temp);
+                                      }
+                                    }
+                                    if(BooksItem.length == 0)
+                                    {
+                                      return callback({
+                                        message: "No books found",
+                                      },
+                                      "");
+                                    }
+                                   if(params.order == "desc")
+                                   {
+                                      BooksItem.sort((a,b) => { 
+                                        if (a[params.sortBy] > b[params.sortBy]) {
+                                            return -1;
+                                        }
+                                        if (a[params.sortBy] < b[params.sortBy]) {
+                                            return 1;
+                                        }
+                                        return 0;
+                                      });
+                                   }
+                                   else
+                                   {
+                                      BooksItem.sort((a,b) => { 
+                                        if (a[params.sortBy] < b[params.sortBy]) {
+                                            return -1;
+                                        }
+                                        if (a[params.sortBy] > b[params.sortBy]) {
+                                            return 1;
+                                        }
+                                        return 0;
+                                      });
+                                   }
+                                   return callback(null, BooksItem.slice(params.startIndex,params.startIndex+maxResults)); 
+                                }
+                            }
+                            else
+                            {
+                              return callback({
+                                message: "No books found",
+                              },
+                              "");
+                            }
+                          })
+                          .catch((error) => {
+                            return callback(error);
+                          }); 
     });
-    return;
   }
 
- 
-  const { q } =  params;
-  SearchBookId({ q }, (error, bookIdArray) => {
-    if (error) {
-      return callback(error,"");
-    }
-    const Lib = Library.find({
-                        $and:[
-                          { "books":{ $elemMatch:{"availableBook" : {$gt:0}}}},
-                          { "books":{ $elemMatch:{"bookId" : { $in:  bookIdArray }}}},
-                        ]}).populate('books.bookId');
-    Lib.then((response) => {
-      if(response != null)
-      {
-          let bookExists = false;
-          for (var index = 0; index < response.books.length; ++index) {
-            var tempBook = response.books[index];
-            if(tempBook.bookId == bookId){
-              bookExists = true;
-              break;
-            }
-           }
   
-          if(bookExists)
-          {
-            return callback(
-              {
-                message: "Book already present in library",
-              },
-              ""
-            );
-          }
-          
-          Library.updateOne(
-            { userId : params.userId }, 
-            { $push: { 
-                books: {
-                  "bookId":bookId,
-                  "availableBook":params.availableBook,
-                  "rentExpected":params.rentExpected
-                }
-            }
-           },
-            function (err, docs) {
-              if (err){
-                return callback(err,"");
-              }
-              return callback(null, docs);
-            }
-          );
-          
-      }
-      else
-      {
-        const Lib2 = new Library({
-          "userId":params.userId,
-          "books": {
-          "bookId":bookId,
-          "availableBook":params.availableBook,
-          "rentExpected":params.rentExpected
-          }
-        });
-        Lib2
-          .save()
-          .then((docs) => {
-            return callback(null, docs);
-          })
-          .catch((error) => {
-            return callback(error);
-          });
-      }
-    })
-    .catch((error) => {
-      return callback(error);
-    });
-  });
 }
 
 export { addBookService, findBookService, editBookService, removeBookService, bookDetailsService, getCollectionService, searchLibService }
