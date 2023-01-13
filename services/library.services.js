@@ -254,7 +254,8 @@ const searchLibService = (params, callback) => {
         {
               for(var j = 0;j<response[i].books.length;j++)
               {
-                if(response[i].books[j].availableBook > 0 && 
+                if( response[i].books[j].availableBook > 0 && 
+                    response[i].userId != params.userId &&
                   ( params.lang === undefined || (params.lang && params.lang == response[i].books[j].bookId.language)) &&
                   ( params.genre === undefined || (params.genre && response[i].books[j].bookId.genre.indexOf(params.genre) > -1 )))
                 {
@@ -345,6 +346,7 @@ const searchLibService = (params, callback) => {
                                           bookIdArray.some(function (a) {
                                             return a.equals(response[i].books[j].bookId._id);
                                           }) && 
+                                          response[i].userId != params.userId &&
                                         ( params.lang === undefined || (params.lang && params.lang == response[i].books[j].bookId.language)) &&
                                         ( params.genre === undefined || (params.genre && response[i].books[j].bookId.genre.indexOf(params.genre) > -1 )))
                                       {

@@ -10,8 +10,7 @@ const RentDetailsService = (params, callback) => {
       ""
     );
   }
-
-  const RH = RentHistory.findById(params.rentId).populate('books.bookId').populate('books.ownerId')
+  const RH = RentHistory.findOne({ "_id":mongoose.Types.ObjectId(params.rentId)}).populate('books.bookId')
   RH.then((response) => {
     if(response != null)
     {
@@ -39,21 +38,22 @@ const IssuedHistoryService = (params, callback) => {
       ""
     );
   }
-  const Lib = RentHistory.find({"issuerId":params.userId}).populate('books.bookId').populate('books.ownerId')
+  const Lib = RentHistory.find({"issuerId":mongoose.Types.ObjectId(params.issuerId)}).populate('books.bookId')
   Lib.then((response) => {
     if(response != null)
     {
       var rentRecords = [];
       for(var i = 0; i<response.length;i++)
-      {
-            for(var j = 0;j<response[i].books.length;i++)
+      {     
+            for(var j = 0;j<response[i].books.length;j++)
             {
-                var temp = {
+              var temp = {
                   "rentedOn":response[i].rentedOn,
                   "returnDate":response[i].returnDate,
                   "trackingID":response[i].trackingID,
+                  "rent":response[i].books[j].rent,
                   "deliveryStatus":response[i].books[j].deliveryStatus,
-                  "OwnerName":response[i].books[j].ownerId.firstName + response[i].books[j].ownerId?.lastName,
+                  "ownerName":response[i].books[j].ownerName,
                   "bookName":response[i].books[j].bookId.bookName,
                   "author":response[i].books[j].bookId.author,
                   "isbn":response[i].books[j].bookId.isbn,
@@ -102,7 +102,7 @@ const OfferedHistoryService = (params, callback) => {
                     "returnDate":response[i].returnDate,
                     "rentStatus":response[i].books[j].rentStatus,
                     "rent":response[i].books[j].rent,
-                    "rentedBy":response[i].issuerId.firstName + response[i].issuerId?.lastName,
+                    "rentedBy":response[i].issuerId.firstName +" " + (response[i].issuerId.lastName? response[i].issuerId.lastName:""),
                     "bookName":response[i].books[j].bookId.bookName,
                     "author":response[i].books[j].bookId.author,
                     "isbn":response[i].books[j].bookId.isbn,
@@ -130,7 +130,7 @@ const OfferedHistoryService = (params, callback) => {
 const addHistoryService = (params, callback) => {
   if (params.bookArray === undefined  || params.issuerId === undefined ||
     params.paymentMode === undefined || params.trackingID === undefined || params.address === undefined || params.subTotal === undefined || params.deliveryCharge === undefined ||
-    params.totalAmount === undefined || params.rentedOn === undefined || params.returnDate ) {
+    params.totalAmount === undefined || params.rentedOn === undefined || params.returnDate === undefined) {
     return callback(
       {
         message: "Please enter Mandatory Details required",

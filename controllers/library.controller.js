@@ -86,6 +86,7 @@ const search = (req, res, next) => {
    
     var params = {
       q: req.query.q,
+      userId:req.body.userId,
       lang: req.query.lang?.toLowerCase(),
       genre: req.query.genre?.toLowerCase(),
       startIndex : req.query.startIndex ? req.query.startIndex :0,
