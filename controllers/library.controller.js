@@ -86,6 +86,12 @@ const search = (req, res, next) => {
    
     var params = {
       q: req.query.q,
+      userId:req.body.userId,
+      lang: req.query.lang?.toLowerCase(),
+      genre: req.query.genre?.toLowerCase(),
+      startIndex : req.query.startIndex ? req.query.startIndex :0,
+      sortBy:req.query.sortBy? req.query.sortBy:"rentExpected",
+      order:req.query.order?req.query.order:"asc"
      };
     searchLibService(params, (error, results) => {
       if (error) {

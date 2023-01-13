@@ -11,6 +11,10 @@ const RHBookSchema = new mongoose.Schema({
         ref:"users",
         required: true,
     },
+    ownerName:{
+      type:String,
+      required: true
+    },
     rent:{
       type:Number,
       required: true,

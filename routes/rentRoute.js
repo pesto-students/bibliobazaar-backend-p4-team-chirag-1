@@ -4,8 +4,8 @@ import { getRentDetails, getIssuedHistory, getOfferedHistory, addHistory } from 
 const RentRouter = express.Router()
 
 RentRouter.get('/details', getRentDetails)
-RentRouter.get('/rent', getIssuedHistory)
+RentRouter.get('/issued', getIssuedHistory)
 RentRouter.get('/offered', getOfferedHistory)
-RentRouter.get('/add', addHistory)
+RentRouter.post('/add', addHistory)
 
 export { RentRouter }

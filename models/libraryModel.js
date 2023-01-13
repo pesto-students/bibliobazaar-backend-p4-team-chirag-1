@@ -18,7 +18,9 @@ const LibBookSchema = new mongoose.Schema({
       type:Number,
       required:true
     }
-});
+  },
+    { timestamps: true },
+);
 
 const librarySchema = new mongoose.Schema({
   userId: {
