@@ -75,7 +75,7 @@ const userSchema = new mongoose.Schema({
     required: false,
   },
   dob: {
-    type: Date,
+    type: String,
     required: false,
   },
   profilePicture: {
@@ -87,7 +87,12 @@ const userSchema = new mongoose.Schema({
       // bookId: mongoose.Schema.Types.ObjectId,
       // ownerUserId: mongoose.Schema.Types.ObjectId
       bookId: String,
-      ownerUserId: String
+      ownerUserId: String,
+      bookImage: String,
+      bookName: String,
+      bookAuthor: String,
+      isbn: String,
+      rentExpected: Number
     }],
     required: false,
   },
