@@ -1,8 +1,19 @@
 import { addBookService, findBookService, editBookService, removeBookService, bookDetailsService, getCollectionService, searchLibService } from "../services/library.services";
 
 const addBook = (req, res, next) => {
-    const { userId, bookName, author, isbn, imageUrl, genre, language, availableBook, rentExpected} = req.body;
-    addBookService({ userId, bookName, author, isbn, imageUrl, genre, language, availableBook, rentExpected }, (error, results) => {
+  var  params = {
+    userId: req.user.userId,
+    bookName: req.body.bookName,
+    author: req.body.author,
+    isbn: req.body.isbn,
+    imageUrl: req.body.imageUrl,
+    genre: req.body.genre,
+    description: req.body.description,
+    language: req.body.language,
+    availableBook: req.body.availableBook,
+    rentExpected: req.body.rentExpected
+    };
+    addBookService(params, (error, results) => {
       if (error) {
         return next(error);
       }
@@ -14,8 +25,11 @@ const addBook = (req, res, next) => {
 }
 
 const findBook = (req, res, next) => {
-    const { userId, isbn} = req.body;
-    findBookService({ userId, isbn }, (error, results) => {
+    var  params = {
+      userId: req.user.userId,
+      isbn: req.body.isbn
+      };
+    findBookService(params, (error, results) => {
       if (error) {
         return next(error);
       }
@@ -27,9 +41,13 @@ const findBook = (req, res, next) => {
 }
 
 const editBook = (req, res, next) => {
-  const { userId, bookId, availableBook, rentExpected } = req.body;
-
-  editBookService({ userId, bookId, availableBook, rentExpected }, (error, results) => {
+  var  params = {
+    userId: req.user.userId,
+    bookId: req.body.bookId,
+    availableBook: req.body.availableBook,
+    rentExpected: req.body.rentExpected
+    };
+  editBookService(params, (error, results) => {
     if (error) {
       return next(error);
     }
@@ -41,9 +59,12 @@ const editBook = (req, res, next) => {
 }
 
 const removeBook = (req, res, next) => {
-    const { userId, bookId } = req.body;
+  var  params = {
+    userId: req.user.userId,
+    bookId: req.body.bookId,
+    };
   
-    removeBookService({ userId, bookId }, (error, results) => {
+    removeBookService(params, (error, results) => {
       if (error) {
         return next(error);
       }
@@ -55,9 +76,11 @@ const removeBook = (req, res, next) => {
 }
 
 const bookDetails = (req, res, next) => {
-  const { userId, bookId } = req.body;
-  
-    bookDetailsService({ userId, bookId }, (error, results) => {
+  var  params = {
+    userId: req.user.userId,
+    bookId: req.body.bookId,
+    };
+    bookDetailsService(params, (error, results) => {
       if (error) {
         return next(error);
       }
@@ -69,8 +92,7 @@ const bookDetails = (req, res, next) => {
 }
 
 const getCollection = (req, res, next) => {
-    const { userId } = req.body;
-  
+    const { userId } = req.user;
     getCollectionService({ userId }, (error, results) => {
       if (error) {
         return next(error);
@@ -86,7 +108,7 @@ const search = (req, res, next) => {
    
     var params = {
       q: req.query.q,
-      userId:req.body.userId,
+      userId:req.user?.userId,
       lang: req.query.lang?.toLowerCase(),
       genre: req.query.genre?.toLowerCase(),
       startIndex : req.query.startIndex ? req.query.startIndex :0,
