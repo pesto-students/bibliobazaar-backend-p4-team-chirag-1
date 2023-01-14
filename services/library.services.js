@@ -244,7 +244,7 @@ const getCollectionService = (params, callback) => {
 const searchLibService = (params, callback) => {
 
   if (params.q === undefined) {
-    Lib = Library.find( { "books":{ $elemMatch:{"availableBook" : {$gt:0}}}}).populate('books.bookId');
+    const Lib = Library.find( { "books":{ $elemMatch:{"availableBook" : {$gt:0}}}}).populate('books.bookId');
     Lib.then((response) => {
       
       if(response != null)

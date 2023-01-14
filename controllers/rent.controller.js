@@ -13,8 +13,10 @@ const getRentDetails = (req, res, next) => {
   });
 }
 const getIssuedHistory = (req, res, next) => {
-    const { issuerId } = req.body;
-    IssuedHistoryService({ issuerId }, (error, results) => {
+    var params = {
+      issuerId:req.user?.userId
+    }
+    IssuedHistoryService(params, (error, results) => {
       if (error) {
         return next(error);
       }
@@ -25,8 +27,10 @@ const getIssuedHistory = (req, res, next) => {
     });
 }
 const getOfferedHistory = (req, res, next) => {
-    const { ownerId } = req.body;
-    OfferedHistoryService({ ownerId }, (error, results) => {
+    var params = {
+      ownerId:req.user?.userId
+    }
+    OfferedHistoryService(params, (error, results) => {
       if (error) {
         return next(error);
       }
@@ -37,13 +41,19 @@ const getOfferedHistory = (req, res, next) => {
     });
 }
 const addHistory = (req, res, next) => {
-  const { bookArray , issuerId,
-          paymentMode, trackingID, address, subTotal, deliveryCharge,
-          totalAmount, rentedOn, returnDate } = req.body;
-
-  addHistoryService({  bookArray , issuerId,
-    paymentMode, trackingID, address, subTotal, deliveryCharge,
-    totalAmount, rentedOn, returnDate }, (error, results) => {
+   var params = {
+    issuerId: req.user.userId,
+    bookArray: req.body.bookArray,
+    paymentMode: req.body.paymentMode,
+    trackingID: req.body.trackingID,
+    address: req.body.address,
+    subTotal: req.body.subTotal,
+    deliveryCharge: req.body.deliveryCharge,
+    totalAmount: req.body.totalAmount,
+    rentedOn: req.body.rentedOn,
+    returnDate: req.body.returnDate
+  }
+  addHistoryService(params, (error, results) => {
     if (error) {
       return next(error);
     }
