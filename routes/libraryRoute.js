@@ -9,7 +9,7 @@ libraryRouter.get('/find', findBook)
 libraryRouter.post('/add', addBook)
 libraryRouter.post('/edit', editBook)
 libraryRouter.post('/remove', removeBook)
-libraryRouter.get('/details', bookDetails)
+libraryRouter.post('/details', bookDetails)
 libraryRouter.get('/collection', getCollection)
 
 export { libraryRouter }
