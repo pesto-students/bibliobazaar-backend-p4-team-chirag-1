@@ -199,7 +199,7 @@ const addressListService = async ({ emailId, userId }, callback) => {
 }
 
 const addToCartService = async ({ emailId, userId, data }, callback) => {
-  if (data.bookId === undefined || data.ownerUserId === undefined) {
+  if (data.bookId === undefined || data.ownerId === undefined) {
     return callback(
       {
         message: "bookId, ownerUserId Required",
@@ -257,6 +257,25 @@ const deleteFromCartService = async ({ emailId, userId, data }, callback) => {
   }
 }
 
+const deleteAllFromCartService = async ({ emailId, userId }, callback) => {
+  const user = await users.findOne({ emailId });
+
+  if (user != null) {
+
+    const updateCart = await users.findByIdAndUpdate(
+      user._id,
+      { cart: { contents: [ ]} },
+      { new: true }
+    )
+
+    return callback(null, updateCart);
+  } else {
+    return callback({
+      message: "Invalid",
+    });
+  }
+}
+
 
 
 export {
@@ -270,5 +289,6 @@ export {
   deleteAddressService,
   addressListService,
   addToCartService,
-  deleteFromCartService
+  deleteFromCartService,
+  deleteAllFromCartService
 }

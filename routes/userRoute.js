@@ -12,6 +12,7 @@ import {
   addressesList,
   addToCart,
   deleteFromCart,
+  deleteAllFromCart,
 } from "../controllers/user.controller"
 
 const userRouter = express.Router()
@@ -30,5 +31,6 @@ userRouter.get('/addressesList', addressesList)
 
 userRouter.post('/addToCart', addToCart)
 userRouter.post('/deleteFromCart', deleteFromCart)
+userRouter.post('/deleteAllFromCart', deleteAllFromCart)
 
 export { userRouter }

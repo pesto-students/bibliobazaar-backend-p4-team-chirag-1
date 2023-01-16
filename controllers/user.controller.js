@@ -12,6 +12,7 @@ import {
   deleteAddressService,
   addToCartService,
   deleteFromCartService,
+  deleteAllFromCartService,
 } from "../services/user.services";
 
 const signUp = (req, res, next) => {
@@ -186,6 +187,20 @@ const deleteFromCart = (req, res, next) => {
   });
 }
 
+const deleteAllFromCart = (req, res, next) => {
+  const { emailId, userId } = req.user
+
+  deleteAllFromCartService({ emailId, userId }, (error, results) => {
+    if (error) {
+      return next(error);
+    }
+    return res.status(200).send({
+      message: "Success",
+      data: results,
+    });
+  });
+}
+
 export {
   signUp,
   login,
@@ -197,5 +212,6 @@ export {
   deleteAddress,
   addressesList,
   addToCart,
-  deleteFromCart
+  deleteFromCart,
+  deleteAllFromCart
 }
