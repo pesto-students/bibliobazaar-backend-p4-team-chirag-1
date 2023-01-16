@@ -51,7 +51,9 @@ const addHistory = (req, res, next) => {
     deliveryCharge: req.body.deliveryCharge,
     totalAmount: req.body.totalAmount,
     rentedOn: req.body.rentedOn,
-    returnDate: req.body.returnDate
+    returnDate: req.body.returnDate,
+    razorpayOrderId: req.body.razorpayOrderId,
+    razorpayPaymentId: req.body.razorpayPaymentId
   }
   addHistoryService(params, (error, results) => {
     if (error) {

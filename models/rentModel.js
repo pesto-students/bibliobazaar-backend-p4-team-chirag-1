@@ -26,6 +26,18 @@ const RHBookSchema = new mongoose.Schema({
     deliveryStatus:{
         type:String,
         required: true,
+    },
+    bookName: {
+      type: String,
+    },
+    bookAuthor: {
+      type: String,
+    },
+    bookImage: {
+      type: String,
+    },
+    isbn: {
+      type: String,
     }
 });
 
@@ -65,6 +77,14 @@ const RentHistorySchema = new mongoose.Schema({
   },
   returnDate:{
     type:Date,
+    required: true
+  },
+  razorpayOrderId: {
+    type:String,
+    required: true
+  },
+  razorpayPaymentId: {
+    type:String,
     required: true
   },
   books: {

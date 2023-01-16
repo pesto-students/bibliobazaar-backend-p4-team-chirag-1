@@ -38,6 +38,10 @@ const paymentVerification = async (req, res) => {
 
     console.log('Payment Completed')
     res.status(200).json({
+      data: {
+        razorpayOrderId: razorpay_order_id,
+        razorpayPaymentId: razorpay_payment_id
+      },
       message: "success"
     });
   } else {
