@@ -13,8 +13,8 @@ const addBookService = (params, callback) => {
       ""
     );
   }
-  const { bookName, author, isbn, imageUrl, genre, language,} =  params;
-  getBookId({ bookName, author, isbn, imageUrl, genre, language }, (error, bookId) => {
+  const { bookName, author, isbn, imageUrl, genre, language, description} =  params;
+  getBookId({ bookName, author, isbn, imageUrl, genre, language, description }, (error, bookId) => {
     if (error) {
       return callback(error,"");
     }
@@ -255,7 +255,7 @@ const searchLibService = (params, callback) => {
               for(var j = 0;j<response[i].books.length;j++)
               {
                 if( response[i].books[j].availableBook > 0 && 
-                    response[i].userId != params.userId &&
+                    response[i].userId !== params.userId &&
                   ( params.lang === undefined || (params.lang && params.lang == response[i].books[j].bookId.language)) &&
                   ( params.genre === undefined || (params.genre && response[i].books[j].bookId.genre.indexOf(params.genre) > -1 )))
                 {

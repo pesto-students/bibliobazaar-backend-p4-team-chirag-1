@@ -130,7 +130,8 @@ const OfferedHistoryService = (params, callback) => {
 const addHistoryService = (params, callback) => {
   if (params.bookArray === undefined  || params.issuerId === undefined ||
     params.paymentMode === undefined || params.trackingID === undefined || params.address === undefined || params.subTotal === undefined || params.deliveryCharge === undefined ||
-    params.totalAmount === undefined || params.rentedOn === undefined || params.returnDate === undefined) {
+    params.totalAmount === undefined || params.rentedOn === undefined || params.returnDate === undefined || 
+    params.razorpayOrderId === undefined || params.razorpayPaymentId === undefined) {
     return callback(
       {
         message: "Please enter Mandatory Details required",
@@ -149,7 +150,9 @@ const addHistoryService = (params, callback) => {
     "totalAmount":params.totalAmount,
     "rentedOn":params.rentedOn,
     "returnDate":params.returnDate,
-    "books": params.bookArray
+    "books": params.bookArray,
+    "razorpayOrderId": params.razorpayOrderId,
+    "razorpayPaymentId": params.razorpayPaymentId
   });
   RH
     .save()

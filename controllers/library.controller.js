@@ -77,7 +77,7 @@ const removeBook = (req, res, next) => {
 
 const bookDetails = (req, res, next) => {
   var  params = {
-    userId: req.user.userId,
+    userId: req.body.userId,
     bookId: req.body.bookId,
     };
     bookDetailsService(params, (error, results) => {

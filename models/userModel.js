@@ -87,12 +87,15 @@ const userSchema = new mongoose.Schema({
       // bookId: mongoose.Schema.Types.ObjectId,
       // ownerUserId: mongoose.Schema.Types.ObjectId
       bookId: String,
-      ownerUserId: String,
+      ownerId: String,
+      ownerName: String,
       bookImage: String,
       bookName: String,
       bookAuthor: String,
       isbn: String,
-      rentExpected: Number
+      rent: Number,
+      deliveryStatus: String,
+      rentStatus: String,
     }],
     required: false,
   },
