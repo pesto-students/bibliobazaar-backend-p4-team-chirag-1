@@ -246,18 +246,29 @@ const searchLibService = (params, callback) => {
   if (params.q === undefined) {
     const Lib = Library.find( { "books":{ $elemMatch:{"availableBook" : {$gt:0}}}}).populate('books.bookId');
     Lib.then((response) => {
-      
       if(response != null)
       { 
         var BooksItem = [];
+        var langArray = null;
+        var genreArray = null;
+        if(params.lang)
+        {
+          langArray = params.lang.split(',');
+        }
+        if(params.genre)
+        {
+          genreArray = params.genre.split(',');
+        }
         for(var i = 0; i<response.length;i++)
         {
               for(var j = 0;j<response[i].books.length;j++)
               {
                 if( response[i].books[j].availableBook > 0 && 
                     response[i].userId !== params.userId &&
-                  ( params.lang === undefined || (params.lang && params.lang == response[i].books[j].bookId.language)) &&
-                  ( params.genre === undefined || (params.genre && response[i].books[j].bookId.genre.indexOf(params.genre) > -1 )))
+                  ( !langArray || (langArray && langArray.length > 0 && langArray.indexOf(response[i].books[j].bookId?.language?.toLowerCase()) > -1)) &&
+                  ( !genreArray || (genreArray && genreArray.length > 0 && response[i].books[j].bookId?.genre?.some(element => {
+                    return genreArray.includes(element.toLowerCase());
+                  }) )))
                 {
                   var temp = {
                     "userId":response[i].userId,
@@ -326,29 +337,43 @@ const searchLibService = (params, callback) => {
       if (error) {
         return callback(error,"");
       }
-      console.log(bookIdArray);
       const Lib = Library.find({
                           $and:[
                             { "books":{ $elemMatch:{"availableBook" : {$gt:0}}}},
                             { "books":{ $elemMatch:{"bookId" : { $in:  bookIdArray }}}},
                           ]}).populate('books.bookId');
-      
                           Lib.then((response) => {
-      
+                            
                             if(response != null)
                             { 
                               var BooksItem = [];
+                              var langArray = null;
+                              var genreArray = null
+                              if(params.lang)
+                              {
+                                langArray = params.lang.split(',');
+                              }
+                              if(params.genre)
+                              {
+                                genreArray = params.genre.split(',');
+                              }
                               for(var i = 0; i<response.length;i++)
                               {
                                     for(var j = 0;j<response[i].books.length;j++)
                                     {
+                                      console.log(i+"-"+j)
+                                      console.log(bookIdArray.some(function (a) {
+                                        return a.equals(response[i].books[j].bookId._id);
+                                      }))
                                       if( response[i].books[j].availableBook > 0 && 
                                           bookIdArray.some(function (a) {
                                             return a.equals(response[i].books[j].bookId._id);
                                           }) && 
                                           response[i].userId != params.userId &&
-                                        ( params.lang === undefined || (params.lang && params.lang == response[i].books[j].bookId.language)) &&
-                                        ( params.genre === undefined || (params.genre && response[i].books[j].bookId.genre.indexOf(params.genre) > -1 )))
+                                          ( !langArray || (langArray && langArray.length > 0 && langArray.indexOf(response[i].books[j].bookId?.language?.toLowerCase()) > -1)) &&
+                                          ( !genreArray || (genreArray && genreArray.length > 0 && response[i].books[j].bookId?.genre?.some(element => {
+                                            return genreArray.includes(element.toLowerCase());
+                                          }) )))
                                       {
                                         var temp = {
                                           "userId":response[i].userId,
@@ -414,5 +439,37 @@ const searchLibService = (params, callback) => {
 
   
 }
+const updateAfterRentService = (bookArray, callback) => {
+  if (bookArray === undefined) {
+    return callback(
+      {
+        message: "bookArray required",
+      },
+      ""
+    );
+  }
+  var PromArray = new Array(bookArray.length)
+  for(var i = 0;i<bookArray.length;i++)
+  {
+    PromArray[i] = Library.updateOne(
+      { 
+        "userId" : bookArray[i].ownerId,
+        "books.bookId":bookArray[i].bookId
+      }, 
+      { 
+        "$inc": { 
+            'books.$.rentedBook': 1,
+            'books.$.availableBook': -1
+        }
+      }
+      );
+  }
+   
+  Promise.all(PromArray).then((response) => {
+      return callback(null,response);
+  }).catch((error) => {
+    return callback(error);
+  });
+}
 
-export { addBookService, findBookService, editBookService, removeBookService, bookDetailsService, getCollectionService, searchLibService }
+export { addBookService, findBookService, editBookService, removeBookService, bookDetailsService, getCollectionService, searchLibService, updateAfterRentService }

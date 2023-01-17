@@ -1,5 +1,6 @@
 import RentHistory from "../models/rentModel"
 import mongoose from "mongoose";
+import { updateAfterRentService } from "../services/library.services";
 
 const RentDetailsService = (params, callback) => {
   if (params.rentId === undefined) {
@@ -157,7 +158,13 @@ const addHistoryService = (params, callback) => {
   RH
     .save()
     .then((docs) => {
-      return callback(null, docs);
+       
+      updateAfterRentService(params.bookArray, (error, response) => {
+        if (error) {
+          return callback(error,"");
+        }
+        return callback(null, docs);
+      })
     })
     .catch((error) => {
       return callback(error);
