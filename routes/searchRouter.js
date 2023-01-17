@@ -3,6 +3,6 @@ import express from 'express'
 
 const searchRouter = express.Router()
 
-searchRouter.post('/', searchBook)
+searchRouter.get('/', searchBook)
 
 export { searchRouter }
