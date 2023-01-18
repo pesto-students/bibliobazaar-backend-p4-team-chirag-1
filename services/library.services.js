@@ -297,10 +297,7 @@ const searchLibService = (params, callback) => {
               }
               if(BooksItem.length == 0)
               {
-                return callback({
-                  message: "No books found",
-                },
-                "");
+                return callback(null,[]);
               }
              if(params.order == "desc")
              {
@@ -331,10 +328,7 @@ const searchLibService = (params, callback) => {
       }
       else
       {
-        return callback({
-          message: "No books found",
-        },
-        "");
+        return callback(null,[]);
       }
     })
     .catch((error) => {
@@ -402,10 +396,7 @@ const searchLibService = (params, callback) => {
                                     }
                                     if(BooksItem.length == 0)
                                     {
-                                      return callback({
-                                        message: "No books found",
-                                      },
-                                      "");
+                                      return callback(null,[]);
                                     }
                                    if(params.order == "desc")
                                    {
@@ -436,10 +427,7 @@ const searchLibService = (params, callback) => {
                             }
                             else
                             {
-                              return callback({
-                                message: "No books found",
-                              },
-                              "");
+                              return callback(null,[]);
                             }
                           })
                           .catch((error) => {
