@@ -341,7 +341,7 @@ const searchLibService = (params, callback) => {
                           $and:[
                             { "books":{ $elemMatch:{"availableBook" : {$gt:0}}}},
                             { "books":{ $elemMatch:{"bookId" : { $in:  bookIdArray }}}},
-                          ]}).populate('books.bookId');
+                          ]}).populate('userId').populate('books.bookId');
                           Lib.then((response) => {
                             
                             if(response != null)
@@ -375,8 +375,8 @@ const searchLibService = (params, callback) => {
                                           }) )))
                                       {
                                         var temp = {
-                                          "userId":response[i].userId.userId,
-                                          "ownerName": response[i].userId.firstName+ " " + response[i].userId.firstName?response[i].userId.lastName:"",
+                                          "userId":response[i].userId._id,
+                                          "ownerName": response[i].userId.firstName+ " " + (response[i].userId.firstName?response[i].userId.lastName:""),
                                           "rentExpected":response[i].books[j].rentExpected,
                                           "availableBook":response[i].books[j].availableBook,
                                           "createdAt":response[i].books[j].createdAt,
