@@ -189,15 +189,26 @@ const bookDetailsService = (params, callback) => {
     );
   }
 
-  const Lib = Library.findOne({ "userId" : params.userId}).populate('books.bookId')
+  const Lib = Library.findOne({ "userId" : params.userId}).populate('userId').populate('books.bookId')
   Lib.then((response) => {
     if(response != null)
     {
+      
       var BookItem = response.books?.filter((item) =>{
          
          return item.bookId._id.toString() == params.bookId
       });
-      return callback(null, BookItem);    
+      
+      BookItem[0].ownerName = response.userId.firstName+ " " + (response.userId.firstName?response.userId.lastName:"");
+      BookItem[0].userId = response.userId._id;
+      console.log(BookItem[0].ownerName);
+      var BookData =
+      {
+        bookData:BookItem[0],
+        ownerName: response.userId.firstName+ " " + (response.userId.firstName?response.userId.lastName:""),
+        userId : response.userId._id
+      }
+      return callback(null, BookData);    
     }
     else
     {
