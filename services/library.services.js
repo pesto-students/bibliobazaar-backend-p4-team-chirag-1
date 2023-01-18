@@ -244,7 +244,7 @@ const getCollectionService = (params, callback) => {
 const searchLibService = (params, callback) => {
 
   if (params.q === undefined) {
-    const Lib = Library.find( { "books":{ $elemMatch:{"availableBook" : {$gt:0}}}}).populate('books.bookId');
+    const Lib = Library.find( { "books":{ $elemMatch:{"availableBook" : {$gt:0}}}}).populate('userId').populate('books.bookId');
     Lib.then((response) => {
       if(response != null)
       { 
@@ -264,14 +264,14 @@ const searchLibService = (params, callback) => {
               for(var j = 0;j<response[i].books.length;j++)
               {
                 if( response[i].books[j].availableBook > 0 && 
-                    response[i].userId !== params.userId &&
                   ( !langArray || (langArray && langArray.length > 0 && langArray.indexOf(response[i].books[j].bookId?.language?.toLowerCase()) > -1)) &&
                   ( !genreArray || (genreArray && genreArray.length > 0 && response[i].books[j].bookId?.genre?.some(element => {
                     return genreArray.includes(element.toLowerCase());
                   }) )))
                 {
                   var temp = {
-                    "userId":response[i].userId,
+                    "userId":response[i].userId.userId,
+                    "ownerName": response[i].userId.firstName+ " " + (response[i].userId.firstName?response[i].userId.lastName:""),
                     "rentExpected":response[i].books[j].rentExpected,
                     "availableBook":response[i].books[j].availableBook,
                     "createdAt":response[i].books[j].createdAt,
@@ -369,14 +369,14 @@ const searchLibService = (params, callback) => {
                                           bookIdArray.some(function (a) {
                                             return a.equals(response[i].books[j].bookId._id);
                                           }) && 
-                                          response[i].userId != params.userId &&
                                           ( !langArray || (langArray && langArray.length > 0 && langArray.indexOf(response[i].books[j].bookId?.language?.toLowerCase()) > -1)) &&
                                           ( !genreArray || (genreArray && genreArray.length > 0 && response[i].books[j].bookId?.genre?.some(element => {
                                             return genreArray.includes(element.toLowerCase());
                                           }) )))
                                       {
                                         var temp = {
-                                          "userId":response[i].userId,
+                                          "userId":response[i].userId.userId,
+                                          "ownerName": response[i].userId.firstName+ " " + response[i].userId.firstName?response[i].userId.lastName:"",
                                           "rentExpected":response[i].books[j].rentExpected,
                                           "availableBook":response[i].books[j].availableBook,
                                           "createdAt":response[i].books[j].createdAt,
