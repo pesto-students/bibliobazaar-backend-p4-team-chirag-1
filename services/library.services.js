@@ -342,6 +342,8 @@ const searchLibService = (params, callback) => {
       if (error) {
         return callback(error,"");
       }
+      if(bookIdArray.length > 0)
+      {
       const Lib = Library.find({
                           $and:[
                             { "books":{ $elemMatch:{"availableBook" : {$gt:0}}}},
@@ -433,6 +435,11 @@ const searchLibService = (params, callback) => {
                           .catch((error) => {
                             return callback(error);
                           }); 
+      }
+      else
+      {
+        return callback(null,[]);
+      }
     });
   }
 

@@ -9,7 +9,7 @@ const searchBook = (req, res, next) => {
         q: req.query.q,
         printType:'books',
         maxResults:maxResults,
-        key:GOOGLE_API_KEY
+        key: GOOGLE_API_KEY
     };
    
     if(req.query.startIndex)
