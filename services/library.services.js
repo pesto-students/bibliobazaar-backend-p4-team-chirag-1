@@ -108,7 +108,7 @@ const findBookService = (params, callback) => {
     
     const Lib = Library.find({ 'userId': mongoose.Types.ObjectId(params.userId), 'books':{$elemMatch:{'bookId' :mongoose.Types.ObjectId(bookId)}}})
     Lib.then((response) => {
-      if(response != null)
+      if(response != null && response.length >0)
       { 
         return callback(null,{'bookFound':true});
       }

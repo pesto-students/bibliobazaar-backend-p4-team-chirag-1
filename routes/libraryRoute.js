@@ -5,7 +5,7 @@ import { search, findBook, addBook, editBook, removeBook, bookDetails, getCollec
 const libraryRouter = express.Router()
 
 libraryRouter.post('/search', search)
-libraryRouter.get('/find', findBook)
+libraryRouter.post('/find', findBook)
 libraryRouter.post('/add', addBook)
 libraryRouter.post('/edit', editBook)
 libraryRouter.post('/remove', removeBook)
