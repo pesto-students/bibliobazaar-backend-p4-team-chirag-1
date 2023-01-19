@@ -270,9 +270,11 @@ const searchLibService = (params, callback) => {
         {
           genreArray = params.genre.split(',');
         }
-        for(var i = 0; i<response.length;i++)
+        console.log(response.length)
+        for(let i = 0; i<response.length;i++)
         {
-              for(var j = 0;j<response[i].books.length;j++)
+              console.log(i)
+              for(let j = 0;j<response[i].books.length;j++)
               {
                 if( response[i].books[j].availableBook > 0 && 
                   ( !langArray || (langArray && langArray.length > 0 && langArray.indexOf(response[i].books[j].bookId?.language?.toLowerCase()) > -1)) &&
@@ -280,8 +282,7 @@ const searchLibService = (params, callback) => {
                     return genreArray.includes(element.toLowerCase());
                   }) )))
                 {
-
-                  var temp = {
+                   var temp = {
                     "userId":response[i].userId._id,
                     "ownerName": response[i].userId.firstName+ " " + (response[i].userId.firstName?response[i].userId.lastName:""),
                     "rentExpected":response[i].books[j].rentExpected,
@@ -296,36 +297,36 @@ const searchLibService = (params, callback) => {
                   BooksItem.push(temp);
                 }
               }
-              if(BooksItem.length == 0)
-              {
-                return callback(null,[]);
+        }
+        if(BooksItem.length == 0)
+        {
+            return callback(null,[]);
+        }
+        if(params.order == "desc")
+        {
+            BooksItem.sort((a,b) => { 
+              if (a[params.sortBy] > b[params.sortBy]) {
+                  return -1;
               }
-             if(params.order == "desc")
-             {
-                BooksItem.sort((a,b) => { 
-                  if (a[params.sortBy] > b[params.sortBy]) {
-                      return -1;
-                  }
-                  if (a[params.sortBy] < b[params.sortBy]) {
-                      return 1;
-                  }
-                  return 0;
-                });
-             }
-             else
-             {
-                BooksItem.sort((a,b) => { 
-                  if (a[params.sortBy] < b[params.sortBy]) {
-                      return -1;
-                  }
-                  if (a[params.sortBy] > b[params.sortBy]) {
-                      return 1;
-                  }
-                  return 0;
-                });
-             }
-             return callback(null, BooksItem.slice(params.startIndex,params.startIndex+maxResults)); 
-          }
+              if (a[params.sortBy] < b[params.sortBy]) {
+                  return 1;
+              }
+              return 0;
+            });
+         }
+         else
+         {
+            BooksItem.sort((a,b) => { 
+              if (a[params.sortBy] < b[params.sortBy]) {
+                  return -1;
+              }
+              if (a[params.sortBy] > b[params.sortBy]) {
+                  return 1;
+              }
+              return 0;
+            });
+         }
+         return callback(null, BooksItem.slice(params.startIndex,params.startIndex+maxResults)); 
       }
       else
       {
@@ -397,36 +398,37 @@ const searchLibService = (params, callback) => {
                                         BooksItem.push(temp);
                                       }
                                     }
-                                    if(BooksItem.length == 0)
-                                    {
-                                      return callback(null,[]);
-                                    }
-                                   if(params.order == "desc")
-                                   {
-                                      BooksItem.sort((a,b) => { 
-                                        if (a[params.sortBy] > b[params.sortBy]) {
-                                            return -1;
-                                        }
-                                        if (a[params.sortBy] < b[params.sortBy]) {
-                                            return 1;
-                                        }
-                                        return 0;
-                                      });
-                                   }
-                                   else
-                                   {
-                                      BooksItem.sort((a,b) => { 
-                                        if (a[params.sortBy] < b[params.sortBy]) {
-                                            return -1;
-                                        }
-                                        if (a[params.sortBy] > b[params.sortBy]) {
-                                            return 1;
-                                        }
-                                        return 0;
-                                      });
-                                   }
-                                   return callback(null, BooksItem.slice(params.startIndex,params.startIndex+maxResults)); 
+                                    
                                 }
+                                if(BooksItem.length == 0)
+                                {
+                                  return callback(null,[]);
+                                }
+                               if(params.order == "desc")
+                               {
+                                  BooksItem.sort((a,b) => { 
+                                    if (a[params.sortBy] > b[params.sortBy]) {
+                                        return -1;
+                                    }
+                                    if (a[params.sortBy] < b[params.sortBy]) {
+                                        return 1;
+                                    }
+                                    return 0;
+                                  });
+                               }
+                               else
+                               {
+                                  BooksItem.sort((a,b) => { 
+                                    if (a[params.sortBy] < b[params.sortBy]) {
+                                        return -1;
+                                    }
+                                    if (a[params.sortBy] > b[params.sortBy]) {
+                                        return 1;
+                                    }
+                                    return 0;
+                                  });
+                               }
+                               return callback(null, BooksItem.slice(params.startIndex,params.startIndex+maxResults));
                             }
                             else
                             {
