@@ -48,9 +48,11 @@ const IssuedHistoryService = (params, callback) => {
       {     
             for(var j = 0;j<response[i].books.length;j++)
             {
+              var rentedOn = response[i].rentedOn.getDate() + "-" +(response[i].rentedOn.getMonth()+1) + '-'+ response[i].rentedOn.getFullYear();
+              var returnDate = response[i].returnDate.getDate() + "-" +(response[i].returnDate.getMonth()+1) + '-'+ response[i].returnDate.getFullYear();
               var temp = {
-                  "rentedOn":response[i].rentedOn,
-                  "returnDate":response[i].returnDate,
+                  "rentedOn":rentedOn,
+                  "returnDate":returnDate,
                   "trackingID":response[i].trackingID,
                   "rent":response[i].books[j].rent,
                   "deliveryStatus":response[i].books[j].deliveryStatus,
@@ -98,9 +100,11 @@ const OfferedHistoryService = (params, callback) => {
               {
                 if(response[i].books[j].ownerId == params.ownerId)
                 {
+                  var rentedOn = response[i].rentedOn.getDate() + "-" +(response[i].rentedOn.getMonth()+1) + '-'+ response[i].rentedOn.getFullYear();
+                  var returnDate = response[i].returnDate.getDate() + "-" +(response[i].returnDate.getMonth()+1) + '-'+ response[i].returnDate.getFullYear();
                   var temp = {
-                    "rentedOn":response[i].rentedOn,
-                    "returnDate":response[i].returnDate,
+                    "rentedOn":rentedOn,
+                    "returnDate":returnDate,
                     "rentStatus":response[i].books[j].rentStatus,
                     "rent":response[i].books[j].rent,
                     "rentedBy":response[i].issuerId.firstName +" " + (response[i].issuerId.lastName? response[i].issuerId.lastName:""),
