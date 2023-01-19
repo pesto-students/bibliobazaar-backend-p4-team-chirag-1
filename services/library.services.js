@@ -280,8 +280,9 @@ const searchLibService = (params, callback) => {
                     return genreArray.includes(element.toLowerCase());
                   }) )))
                 {
+
                   var temp = {
-                    "userId":response[i].userId.userId,
+                    "userId":response[i].userId._id,
                     "ownerName": response[i].userId.firstName+ " " + (response[i].userId.firstName?response[i].userId.lastName:""),
                     "rentExpected":response[i].books[j].rentExpected,
                     "availableBook":response[i].books[j].availableBook,
