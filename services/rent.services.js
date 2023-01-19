@@ -51,6 +51,7 @@ const IssuedHistoryService = (params, callback) => {
               var rentedOn = response[i].rentedOn.getDate() + "-" +(response[i].rentedOn.getMonth()+1) + '-'+ response[i].rentedOn.getFullYear();
               var returnDate = response[i].returnDate.getDate() + "-" +(response[i].returnDate.getMonth()+1) + '-'+ response[i].returnDate.getFullYear();
               var temp = {
+                  "rentId": response[i]._id,
                   "rentedOn":rentedOn,
                   "returnDate":returnDate,
                   "trackingID":response[i].trackingID,
