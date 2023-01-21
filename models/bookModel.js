@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 import uniqueValidator from "mongoose-unique-validator"
 
 const bookSchema = new mongoose.Schema({
- bookName: {
+  bookName: {
     type: String,
     required: true,
   },
@@ -34,7 +34,7 @@ const bookSchema = new mongoose.Schema({
 
 
 bookSchema.plugin(uniqueValidator, { message: "Books with same ISBN code already present" });
-bookSchema.virtual('bookId').get(function() {
+bookSchema.virtual('bookId').get(function () {
   return this._id;
 });
 const books = mongoose.model('books', bookSchema);

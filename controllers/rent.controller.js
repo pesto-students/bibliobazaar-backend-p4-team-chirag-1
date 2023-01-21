@@ -13,35 +13,35 @@ const getRentDetails = (req, res, next) => {
   });
 }
 const getIssuedHistory = (req, res, next) => {
-    var params = {
-      issuerId:req.user?.userId
+  var params = {
+    issuerId: req.user?.userId
+  }
+  IssuedHistoryService(params, (error, results) => {
+    if (error) {
+      return next(error);
     }
-    IssuedHistoryService(params, (error, results) => {
-      if (error) {
-        return next(error);
-      }
-      return res.status(200).send({
-        message: "Success",
-        data: results,
-      });
+    return res.status(200).send({
+      message: "Success",
+      data: results,
     });
+  });
 }
 const getOfferedHistory = (req, res, next) => {
-    var params = {
-      ownerId:req.user?.userId
+  var params = {
+    ownerId: req.user?.userId
+  }
+  OfferedHistoryService(params, (error, results) => {
+    if (error) {
+      return next(error);
     }
-    OfferedHistoryService(params, (error, results) => {
-      if (error) {
-        return next(error);
-      }
-      return res.status(200).send({
-        message: "Success",
-        data: results,
-      });
+    return res.status(200).send({
+      message: "Success",
+      data: results,
     });
+  });
 }
 const addHistory = (req, res, next) => {
-   var params = {
+  var params = {
     issuerId: req.user.userId,
     bookArray: req.body.bookArray,
     paymentMode: req.body.paymentMode,
