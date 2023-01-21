@@ -17,7 +17,7 @@ import {
 
 const signUp = (req, res, next) => {
   const { password } = req.body;
-  
+
   const salt = bcrypt.genSaltSync(10);
 
   req.body.password = bcrypt.hashSync(password, salt);
@@ -129,8 +129,8 @@ const editAddress = async (req, res, next) => {
 
 const deleteAddress = async (req, res, next) => {
   const { emailId, userId } = req.user
-  const data =  req?.body 
-  
+  const data = req?.body
+
   deleteAddressService({ emailId, userId, data }, (error, results) => {
     if (error) {
       return next(error);
@@ -158,7 +158,7 @@ const addressesList = async (req, res, next) => {
 
 const addToCart = (req, res, next) => {
   const { emailId, userId } = req.user
-  const data = req?.body 
+  const data = req?.body
 
   addToCartService({ emailId, userId, data }, (error, results) => {
     if (error) {
@@ -174,7 +174,7 @@ const addToCart = (req, res, next) => {
 
 const deleteFromCart = (req, res, next) => {
   const { emailId, userId } = req.user
-  const data = req?.body 
+  const data = req?.body
 
   deleteFromCartService({ emailId, userId, data }, (error, results) => {
     if (error) {

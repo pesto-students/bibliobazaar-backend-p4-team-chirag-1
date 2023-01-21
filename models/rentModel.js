@@ -1,90 +1,90 @@
 import mongoose from 'mongoose'
 
 const RHBookSchema = new mongoose.Schema({
-    bookId:{
-      type: mongoose.SchemaTypes.ObjectId,
-      ref:"books",
-      required: true,
-    },
-    ownerId:{
-        type: mongoose.SchemaTypes.ObjectId,
-        ref:"users",
-        required: true,
-    },
-    ownerName:{
-      type:String,
-      required: true
-    },
-    rent:{
-      type:Number,
-      required: true,
-    },
-    rentStatus:{
-      type:String,
-      required: true,
-    },
-    deliveryStatus:{
-        type:String,
-        required: true,
-    },
-    bookName: {
-      type: String,
-    },
-    bookAuthor: {
-      type: String,
-    },
-    bookImage: {
-      type: String,
-    },
-    isbn: {
-      type: String,
-    }
+  bookId: {
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: "books",
+    required: true,
+  },
+  ownerId: {
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: "users",
+    required: true,
+  },
+  ownerName: {
+    type: String,
+    required: true
+  },
+  rent: {
+    type: Number,
+    required: true,
+  },
+  rentStatus: {
+    type: String,
+    required: true,
+  },
+  deliveryStatus: {
+    type: String,
+    required: true,
+  },
+  bookName: {
+    type: String,
+  },
+  bookAuthor: {
+    type: String,
+  },
+  bookImage: {
+    type: String,
+  },
+  isbn: {
+    type: String,
+  }
 });
 
 const RentHistorySchema = new mongoose.Schema({
   issuerId: {
     type: mongoose.SchemaTypes.ObjectId,
-    ref:"users",
+    ref: "users",
     required: true,
   },
-  paymentMode:{
-    type:String,
+  paymentMode: {
+    type: String,
     required: true
   },
-  trackingID:{
-    type:String,
+  trackingID: {
+    type: String,
     required: true
   },
-  address:{
-    type:String,
+  address: {
+    type: String,
     required: true
   },
-  subTotal:{
-    type:Number,
+  subTotal: {
+    type: Number,
     required: true
   },
-  deliveryCharge:{
-    type:Number,
+  deliveryCharge: {
+    type: Number,
     required: true
   },
-  totalAmount:{
-    type:Number,
+  totalAmount: {
+    type: Number,
     required: true
   },
-  rentedOn:{
-    type:Date,
+  rentedOn: {
+    type: Date,
     required: true
   },
-  returnDate:{
-    type:Date,
+  returnDate: {
+    type: Date,
     required: true
   },
   razorpayOrderId: {
-    type:String,
+    type: String,
     required: true
   },
   razorpayPaymentId: {
-    type:String,
+    type: String,
     required: true
   },
   books: {

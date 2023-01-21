@@ -13,35 +13,34 @@ const signUpService = (params, callback) => {
     );
   }
   const emailAddress = params.emailId.toLowerCase()
-  const user = users.findOne({ "emailId":emailAddress });
+  const user = users.findOne({ "emailId": emailAddress });
   user.then((res) => {
-     console.log(res)
-     if(res != null)
-     {
-    return callback({
-        message:"Email ID already in use. Try logging in."
-       },null);
-     }
-     else {
-          const newUser = new users(params);
-          newUser
-            .save()
-            .then((response) => {
-              const userId = response._id.toString()
-              const token = generateAccessToken({ emailId: params.emailId, userId })
-              // return callback(null, response);
-              return callback(null, {
-                ...response.toJSON(),
-                token,
-              });
-            })
-            .catch((error) => {
-                return callback(error);
-            });
-      }
+    console.log(res)
+    if (res != null) {
+      return callback({
+        message: "Email ID already in use. Try logging in."
+      }, null);
+    }
+    else {
+      const newUser = new users(params);
+      newUser
+        .save()
+        .then((response) => {
+          const userId = response._id.toString()
+          const token = generateAccessToken({ emailId: params.emailId, userId })
+          // return callback(null, response);
+          return callback(null, {
+            ...response.toJSON(),
+            token,
+          });
+        })
+        .catch((error) => {
+          return callback(error);
+        });
+    }
   }).catch((error) => {
     return callback(error);
-});
+  });
 }
 
 const loginService = async ({ emailId, password }, callback) => {
@@ -63,8 +62,8 @@ const loginService = async ({ emailId, password }, callback) => {
       // return callback(null, { token, userId });
     } else {
       return callback({
-       message: "Incorrect Email ID or Password.",
-       //message: "Incorrect Password! Please try again.",
+        message: "Incorrect Email ID or Password.",
+        //message: "Incorrect Password! Please try again.",
       });
     }
   } else {
@@ -118,12 +117,12 @@ const getUpdateAccountService = async ({ emailId, userId, firstName, lastName, p
 
   const data = {
     firstName: firstName ? firstName : user?.firstName,
-    lastName: lastName?lastName:null, //? lastName : user?.lastName,
-    phoneNumber: phoneNumber?phoneNumber:null, //? phoneNumber : user?.phoneNumber,
-    gender: gender?gender:null, //? gender : user?.gender,
-    dob: dob?dob:null,//? dob : user?.dob,
+    lastName: lastName ? lastName : null, //? lastName : user?.lastName,
+    phoneNumber: phoneNumber ? phoneNumber : null, //? phoneNumber : user?.phoneNumber,
+    gender: gender ? gender : null, //? gender : user?.gender,
+    dob: dob ? dob : null,//? dob : user?.dob,
   }
-  console.log({...data})
+  console.log({ ...data })
   if (user != null) {
     const updateUser = await users.findByIdAndUpdate(
       user._id,
@@ -171,7 +170,7 @@ const editAddressService = async ({ emailId, userId, data }, callback) => {
     }
     const updateUser = await users.findByIdAndUpdate(
       user._id,
-      { addresses: [...filteredAddresses, {...data}] },
+      { addresses: [...filteredAddresses, { ...data }] },
       { new: true }
     )
 
@@ -233,7 +232,7 @@ const addToCartService = async ({ emailId, userId, data }, callback) => {
 
     const updateCart = await users.findByIdAndUpdate(
       user._id,
-      { cart: { contents: [ ...currentCartItems, data]} },
+      { cart: { contents: [...currentCartItems, data] } },
       { new: true }
     )
 
@@ -263,7 +262,7 @@ const deleteFromCartService = async ({ emailId, userId, data }, callback) => {
 
     const updateCart = await users.findByIdAndUpdate(
       user._id,
-      { cart: { contents: [ ...filteredCartItems ]} },
+      { cart: { contents: [...filteredCartItems] } },
       { new: true }
     )
 
@@ -282,7 +281,7 @@ const deleteAllFromCartService = async ({ emailId, userId }, callback) => {
 
     const updateCart = await users.findByIdAndUpdate(
       user._id,
-      { cart: { contents: [ ]} },
+      { cart: { contents: [] } },
       { new: true }
     )
 

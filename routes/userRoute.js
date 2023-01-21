@@ -1,9 +1,9 @@
 import express from 'express'
 
-import { 
-  signUp, 
-  login, 
-  updateProfilePicture, 
+import {
+  signUp,
+  login,
+  updateProfilePicture,
   getUserAccount,
   updateUserAccount,
   addAddress,

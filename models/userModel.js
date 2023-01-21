@@ -5,38 +5,38 @@ const addressSchema = new mongoose.Schema({
   addressId: {
     type: mongoose.Schema.Types.ObjectId,
   },
-  fullName: { 
+  fullName: {
     type: String,
     required: true
   },
-  mobileNumber: { 
+  mobileNumber: {
     type: Number,
     required: true
   },
-  pincode: { 
+  pincode: {
     type: Number,
-    required: true 
+    required: true
   },
-  houseNumber: { 
+  houseNumber: {
     type: String,
-    required: true 
+    required: true
   },
-  area: { 
+  area: {
     type: String,
-    required: true 
+    required: true
   },
   landmark: { type: String },
-  city: { 
+  city: {
     type: String,
-    required: true 
+    required: true
   },
-  state: { 
+  state: {
     type: String,
-    required: true  
+    required: true
   },
-  addressType: { 
+  addressType: {
     type: String,
-    required: true 
+    required: true
   },
   isDefault: { type: Boolean },
 },
