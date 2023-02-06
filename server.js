@@ -1,11 +1,53 @@
 import express from 'express'
 import mongoose from 'mongoose'
+import unless from "express-unless"
+import upload from 'express-fileupload'
+import cors from "cors";
+import * as dotenv from 'dotenv'
+dotenv.config()
 
-import { mongoConnect, PORT } from './config/config'
 import { userRouter } from './routes/userRoute'
+import { libraryRouter } from './routes/libraryRoute'
+import { searchRouter } from './routes/searchRouter'
+import { authenticateToken } from './middlewares/auth.js'
+import { errorHandler } from './middlewares/errors'
+import { uploadRouter } from './routes/uploadRoute'
+import { paymentRouter } from './routes/paymentRoute'
+import { RentRouter } from './routes/rentRoute'
 
 const app = express()
+app.use(cors());
+
+mongoose.Promise = global.Promise;
+const start = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_CONNECT)
+    app.listen(process.env.PORT, () => console.log(`Listening on port ${process.env.PORT}`))
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+start()
+
+authenticateToken.unless = unless;
+app.use(
+  authenticateToken.unless({
+    path: [
+      { url: "/library/search", methods: ["POST"] },
+      { url: "/", methods: ["GET"] },
+      { url: "/user/signUp", methods: ["POST"] },
+      { url: "/user/login", methods: ["POST"] },
+      // Added Temporarily to check payments
+      { url: "/payment/checkout", methods: ["POST"] },
+      { url: "/payment/verify", methods: ["POST"] },
+    ],
+  })
+);
+
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }));
+app.use(upload())
 
 app.get('/', (req, res) => {
   res.status(200).json({
@@ -13,16 +55,20 @@ app.get('/', (req, res) => {
   })
 })
 
-// User Routes
 app.use('/user', userRouter)
+app.use('/',uploadRouter)
+//Search Routes
+app.use('/search', searchRouter)
+//Library Routes
+app.use('/library', libraryRouter)
 
-const start = async () => {
-  try {
-    await mongoose.connect(mongoConnect)
-    app.listen(PORT, () => console.log(`Listening on port ${PORT}`))
-  } catch (err) {
-    console.error(err)
-  }
-}
+// Payment Routes
+app.use('/payment', paymentRouter)
 
-start()
+// Rent Routes
+app.use('/rent', RentRouter)
+
+// middleware for error responses
+app.use(errorHandler);
+
+
