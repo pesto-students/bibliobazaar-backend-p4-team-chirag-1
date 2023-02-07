@@ -1,7 +1,7 @@
 ![BiblioBazaar](https://user-images.githubusercontent.com/25593090/216880021-35044b2f-03d1-4ef9-ae07-f601691d3705.svg)
 
-BiblioBazaar is a Consumer to Consumer(C2C) platform where an end user can have books on rent with prices suitable to their need instead of buying expensive 
-books. As well as, BiblioBazaar also provides a platform for consumers to earn money by renting out the books they own.
+- BiblioBazaar is a Consumer to Consumer(C2C) platform where an end user can have books on rent with prices suitable to their need instead of buying expensive books 
+- As well as, BiblioBazaar also provides a platform for consumers to earn money by renting out the books they own
 
 <br/>
 
